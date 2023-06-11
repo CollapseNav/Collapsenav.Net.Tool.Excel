@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <CollectCoverage>true</CollectCoverage>
+        <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+        <LangVersion>preview</LangVersion>
+        <NoWarn>1591</NoWarn>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0"/>
+        <PackageReference Include="xunit" Version="2.4.1"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="3.1.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.msbuild" Version="3.1.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\Excel\Collapsenav.Net.Tool.Excel\Collapsenav.Net.Tool.Excel.csproj"/>
+        <None Include="*.xlsx" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always"/>
+        <!-- <None Include="TestExcel.xlsx" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always"/>
+        <None Include="ExcelRead.xlsx" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always"/>
+        <None Include="RequireExcel.xlsx" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always"/>
+        <None Include="DefaultExcel.xlsx" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always"/>
+        <None Include="AttributeExcel.xlsx" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always"/> -->
+    </ItemGroup>
+</Project>
