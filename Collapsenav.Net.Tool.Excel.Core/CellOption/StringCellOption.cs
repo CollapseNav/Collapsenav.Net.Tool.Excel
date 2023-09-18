@@ -8,16 +8,20 @@ public class StringCellOption
     /// <summary>
     /// 表头名称
     /// </summary>
-    public string? FieldName { get; set; }
+    public string FieldName { get; set; }
     /// <summary>
     /// 属性名称
     /// </summary>
-    public string? PropName { get; set; }
+    public string PropName { get; set; }
     /// <summary>
     /// 表达式
     /// </summary>
     public string? Func { get; set; }
-    public StringCellOption() { }
+    public StringCellOption()
+    {
+        FieldName = string.Empty;
+        PropName = string.Empty;
+    }
 
     public StringCellOption(string fieldName, string propName, string func)
     {

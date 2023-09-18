@@ -14,20 +14,21 @@ public class ExportConfig : ExportConfig<object>
     /// 必传data数据确定类型
     /// </summary>
     public ExportConfig(IEnumerable<object>? data, IEnumerable<(string, string)>? kvs = null) : base(data, kvs) { }
-    public ExportConfig(IEnumerable<object>? data, IEnumerable<(string, string, string)>? kvs) : base(data)
+    public ExportConfig(IEnumerable<object>? data, IEnumerable<(string, string, string?)>? kvs) : base(data)
     {
         InitFieldOption(kvs);
     }
 
     public ExportConfig(IEnumerable<object>? data, IEnumerable<StringCellOption>? options) : base(data)
     {
-        InitFieldOption(options.Select(item => (item.FieldName, item.PropName, item.Func)));
+        if (options != null)
+            InitFieldOption(options.Select(item => (item.FieldName, item.PropName, item.Func)));
     }
     /// <summary>
     /// 通过字典初始化配置
     /// </summary>
     /// <param name="kvs">Key为表头名称, Value为属性名称</param>
-    public void InitFieldOption(IEnumerable<(string Key, string Value, string Func)>? kvs)
+    public void InitFieldOption(IEnumerable<(string Key, string Value, string? Func)>? kvs)
     {
         FieldOption = new List<ExportCellOption<object>>();
         if (kvs.NotEmpty())
@@ -43,7 +44,7 @@ public class ExportConfig : ExportConfig<object>
     /// <param name="field">表头列</param>
     /// <param name="propName">属性名称</param>
     /// <param name="func"></param>
-    public ExportConfig Add(string field, string propName, string func)
+    public ExportConfig Add(string field, string propName, string? func)
     {
         if (func.NotEmpty())
         {
@@ -65,19 +66,19 @@ public class ExportConfig : ExportConfig<object>
     /// <param name="field">表头列</param>
     /// <param name="propName">属性名称</param>
     /// <param name="func"></param>
-    public ExportConfig AddIf(bool check, string field, string propName, string func)
+    public ExportConfig AddIf(bool check, string field, string propName, string? func)
     {
         if (check)
             return Add(field, propName, func);
         return this;
     }
-    public static new ExportConfig GenConfigBySummary(IEnumerable<object> data)
+    public static new ExportConfig GenConfigBySummary(IEnumerable<object>? data)
     {
         if (data == null)
             throw new NullReferenceException("data 不能为空");
         var config = new ExportConfig(data)
         {
-            FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(data.First().GetType()).FieldOption?.Select(option => new ExportCellOption<object>(option))
+            FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(data.First().GetType()).FieldOption.Select(option => new ExportCellOption<object>(option))
         };
         return config;
     }

@@ -39,10 +39,10 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
         }
     }
     private IEnumerable<T>? data;
-    public virtual IEnumerable<string>? Headers { get => FieldOption?.Select(item => item.ExcelField ?? string.Empty); }
+    public virtual IEnumerable<string> Headers { get => FieldOption.Select(item => item.ExcelField ?? string.Empty); }
 
     protected IDictionary<string, int>? headerIndex;
-    public virtual IDictionary<string, int>? HeadersWithIndex
+    public virtual IDictionary<string, int> HeadersWithIndex
     {
         get
         {

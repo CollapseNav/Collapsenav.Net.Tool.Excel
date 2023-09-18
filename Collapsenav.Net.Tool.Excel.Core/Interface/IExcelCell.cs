@@ -14,8 +14,8 @@ public interface IReadCell
     /// <summary>
     /// 值类型
     /// </summary>
-    Type ValueType { get; }
-    object Value { get; set; }
+    Type? ValueType { get; }
+    object? Value { get; set; }
     /// <summary>
     /// 从其他单元格读取值
     /// </summary>
@@ -29,5 +29,5 @@ public interface IReadCell<T> : IReadCell
     /// <summary>
     /// 适配不同实现的单元格
     /// </summary>
-    T Cell { get; set; }
+    T? Cell { get; set; }
 }

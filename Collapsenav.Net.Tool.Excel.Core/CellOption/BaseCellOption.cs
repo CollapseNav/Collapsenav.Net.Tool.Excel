@@ -11,6 +11,7 @@ public class BaseCellOption<T> : ICellOption
     {
         // 默认情况下先使用 泛型T 设置 DtoType
         DtoType = typeof(T);
+        ExcelField = string.Empty;
     }
 
     public BaseCellOption(ICellOption option) : this()
@@ -42,7 +43,7 @@ public class BaseCellOption<T> : ICellOption
     /// <summary>
     /// 对应excel中的表头字段
     /// </summary>
-    public virtual string? ExcelField { get; set; }
+    public virtual string ExcelField { get; set; }
     /// <summary>
     /// 对应字段的属性(实际上包含PropName)
     /// </summary>

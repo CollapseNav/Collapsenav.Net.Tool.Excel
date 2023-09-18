@@ -9,12 +9,12 @@ namespace Collapsenav.Net.Tool.Excel;
 /// <remarks>可以不使用泛型定义，但是必须有类型数据</remarks>
 public class ReadConfig : ReadConfig<object>
 {
-    public ReadConfig(Type type, IEnumerable<(string, string, string)>? kvs) : base()
+    public ReadConfig(Type type, IEnumerable<(string, string, string?)>? kvs) : base()
     {
         DtoType = type;
         InitFieldOption(kvs);
     }
-    public ReadConfig(string typeName, IEnumerable<(string, string, string)>? kvs) : this(GetMatchType(typeName), kvs) { }
+    public ReadConfig(string typeName, IEnumerable<(string, string, string?)>? kvs) : this(GetMatchType(typeName), kvs) { }
     public ReadConfig(Type type, IEnumerable<(string, string)>? kvs = null) : base()
     {
         DtoType = type;
@@ -33,7 +33,8 @@ public class ReadConfig : ReadConfig<object>
         var type = GetMatchType(typeName);
         if (type != null)
             DtoType = type;
-        InitFieldOption(options.Select(item => (item.FieldName, item.PropName, item.Func)));
+        if (options != null)
+            InitFieldOption(options.Select(item => (item.FieldName, item.PropName, item.Func)));
     }
     /// <summary>
     /// 根据type名称尝试获取type
@@ -44,15 +45,15 @@ public class ReadConfig : ReadConfig<object>
     /// 如果有大于一个匹配项, 则尝试使用全名匹配
     /// </remarks>
     /// <returns></returns>
-    private static Type GetMatchType(string typeName)
+    private static Type? GetMatchType(string typeName)
     {
         var hasDot = typeName.Contains('.');
         var types = AppDomain.CurrentDomain.GetCustomerTypes();
         var matchTypes = types.Where(item => item.FullName.Contains(typeName)).ToArray();
-        Type matchType = null;
+        Type? matchType = null;
         if (matchTypes?.Length == 1)
             matchType = matchTypes.First();
-        else if (matchTypes.Length > 1)
+        else if (matchTypes?.Length > 1)
             matchType = matchTypes.FirstOrDefault(item => item.FullName == typeName);
         return matchType;
     }
@@ -60,7 +61,7 @@ public class ReadConfig : ReadConfig<object>
     /// 通过字典初始化配置
     /// </summary>
     /// <param name="kvs">Key为表头名称, Value为属性名称</param>
-    public virtual void InitFieldOption(IEnumerable<(string Key, string Value, string Func)>? kvs)
+    public virtual void InitFieldOption(IEnumerable<(string Key, string Value, string? Func)>? kvs)
     {
         FieldOption = new List<ReadCellOption<object>>();
         if (kvs.NotEmpty())
@@ -90,7 +91,7 @@ public class ReadConfig : ReadConfig<object>
     /// <param name="field">表头列</param>
     /// <param name="propName">属性名称</param>
     /// <param name="func"></param>
-    public ReadConfig Add(string field, string propName, string func)
+    public ReadConfig Add(string field, string propName, string? func)
     {
         if (func.NotEmpty())
         {
@@ -112,7 +113,7 @@ public class ReadConfig : ReadConfig<object>
     /// <param name="field">表头列</param>
     /// <param name="propName">属性名称</param>
     /// <param name="func"></param>
-    public ReadConfig AddIf(bool check, string field, string propName, string func)
+    public ReadConfig AddIf(bool check, string field, string propName, string? func)
     {
         if (check)
             return Add(field, propName, func);

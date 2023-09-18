@@ -10,16 +10,16 @@ public class ReadCellOption<T> : BaseCellOption<T>
     public ReadCellOption(ICellOption cellOption) : base(cellOption) { }
     public ReadCellOption(string excelField, string propName, Func<string, object?>? action = null) : base(excelField, propName)
     {
-        Action = action;
+        this.action = action;
     }
     public ReadCellOption(string excelField, PropertyInfo prop, Func<string, object?>? action = null) : base(excelField, prop)
     {
-        Action = action;
+        this.action = action;
     }
     /// <summary>
     /// 转换 表格 数据的方法
     /// </summary>
-    public Func<string, object?>? Action
+    public Func<string, object?> Action
     {
         get
         {

@@ -26,7 +26,7 @@ public partial class ExportConfig<T>
     /// </summary>
     public static ExportConfig<T> GenConfigByAttribute(IEnumerable<T>? data = null)
     {
-        return new ExportConfig<T>(ExcelConfig<T, BaseCellOption<T>>.GenConfigByAttribute<ExcelExportAttribute>()) { Data = data };
+        return new ExportConfig<T>(ExcelConfig<T, BaseCellOption<T>>.GenConfigByAttribute<ExcelExportAttribute>()) { Data = data ?? Enumerable.Empty<T>() };
     }
     /// <summary>
     /// 直接根据属性名称创建导出配置
@@ -41,7 +41,7 @@ public partial class ExportConfig<T>
     /// </summary>
     public static ExportConfig<T> GenConfigByProps(IEnumerable<T>? data = null)
     {
-        return new ExportConfig<T>(ExcelConfig<T, BaseCellOption<T>>.GenConfigByProps()) { Data = data };
+        return new ExportConfig<T>(ExcelConfig<T, BaseCellOption<T>>.GenConfigByProps()) { Data = data ?? Enumerable.Empty<T>() };
     }
     public static ExportConfig<T> GenConfigBySummary()
     {
@@ -50,8 +50,8 @@ public partial class ExportConfig<T>
     /// <summary>
     /// 根据注释生成对应导出配置
     /// </summary>
-    public static ExportConfig<T> GenConfigBySummary(IEnumerable<T> data)
+    public static ExportConfig<T> GenConfigBySummary(IEnumerable<T>? data)
     {
-        return new ExportConfig<T>(ExcelConfig<T, BaseCellOption<T>>.GenConfigBySummary()) { Data = data };
+        return new ExportConfig<T>(ExcelConfig<T, BaseCellOption<T>>.GenConfigBySummary()) { Data = data ?? Enumerable.Empty<T>() };
     }
 }

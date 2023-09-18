@@ -5,9 +5,9 @@ public interface IExcelHeader
     /// <summary>
     /// 获取表头数据
     /// </summary>
-    IEnumerable<string>? Headers { get; }
+    IEnumerable<string> Headers { get; }
     /// <summary>
     /// 带index的表头数据
     /// </summary>
-    IDictionary<string, int>? HeadersWithIndex { get; }
+    IDictionary<string, int> HeadersWithIndex { get; }
 }

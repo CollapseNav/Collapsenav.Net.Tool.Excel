@@ -14,7 +14,7 @@ public class EPPlusCellReader : IExcelCellReader
     protected IEnumerable<string> HeaderList;
     protected int rowCount;
     protected ISheetCellReader SheetReader;
-    public EPPlusCellReader(ISheetCellReader sheetReader, string sheetName = null)
+    public EPPlusCellReader(ISheetCellReader sheetReader, string? sheetName = null)
     {
         SheetReader = sheetReader;
         if (sheetName.NotEmpty())

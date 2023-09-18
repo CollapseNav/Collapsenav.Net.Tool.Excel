@@ -6,17 +6,20 @@ public class MulitSheetsExportConfig
     {
         Datas = new();
     }
-    public MulitSheetsExportConfig(Dictionary<string, IEnumerable<object>> datas) : this()
+    public MulitSheetsExportConfig(Dictionary<string, IEnumerable<object>>? datas) : this()
     {
         BuildExportConfig(datas);
     }
     public List<MulitSheetsExportConfigItem> Datas { get; set; }
-    private void BuildExportConfig(Dictionary<string, IEnumerable<object>> dicts)
+    private void BuildExportConfig(Dictionary<string, IEnumerable<object>>? dicts)
     {
-        Datas ??= dicts.Select(item =>
+        if (dicts != null)
         {
-            return new MulitSheetsExportConfigItem(item.Key, item.Value, ExportConfig.InitByExportConfig(ExportConfig.GenDefaultConfig(item.Value)));
-        }).ToList();
+            Datas = dicts.Select(item =>
+            {
+                return new MulitSheetsExportConfigItem(item.Key, item.Value, ExportConfig.InitByExportConfig(ExportConfig.GenDefaultConfig(item.Value)));
+            }).ToList();
+        }
     }
 
     public async Task<ISheetCellReader> ExportToSheetCellReader(ISheetCellReader reader)
@@ -26,16 +29,16 @@ public class MulitSheetsExportConfig
         return reader;
     }
 
-    public static MulitSheetsExportConfig Build<T>(string sheetName, IEnumerable<T> datas, ExportConfig<T> config) where T : class
+    public static MulitSheetsExportConfig Build<T>(string sheetName, IEnumerable<T>? datas, ExportConfig<T>? config) where T : class
     {
         var exportConfig = new MulitSheetsExportConfig();
-        exportConfig.Datas.Add(new MulitSheetsExportConfigItem(sheetName, datas, ExportConfig.InitByExportConfig(config)));
+        exportConfig.Datas.Add(new MulitSheetsExportConfigItem(sheetName, datas ?? Enumerable.Empty<T>(), ExportConfig.InitByExportConfig(config)));
         return exportConfig;
     }
 
-    public MulitSheetsExportConfig Add<T>(string sheetName, IEnumerable<T> datas, ExportConfig<T> config) where T : class
+    public MulitSheetsExportConfig Add<T>(string sheetName, IEnumerable<T>? datas, ExportConfig<T>? config) where T : class
     {
-        Datas.Add(new MulitSheetsExportConfigItem(sheetName, datas, ExportConfig.InitByExportConfig(config)));
+        Datas.Add(new MulitSheetsExportConfigItem(sheetName, datas ?? Enumerable.Empty<T>(), ExportConfig.InitByExportConfig(config)));
         return this;
     }
 }

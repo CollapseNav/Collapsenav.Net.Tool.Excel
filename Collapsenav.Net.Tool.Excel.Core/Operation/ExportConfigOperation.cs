@@ -13,7 +13,7 @@ public partial class ExportConfig<T>
                 excel[0, index].Value = value;
             foreach (var (cellData, rowIndex) in (data ?? Data).SelectWithIndex(1))
                 foreach (var (item, index) in FieldOption.Select((item, i) => (item, i)))
-                    excel[rowIndex, index].Value = item.Action(cellData);
+                    excel[rowIndex, index].Value = item?.Action == null ? string.Empty : item?.Action(cellData);
         });
         return excel.GetStream();
     }

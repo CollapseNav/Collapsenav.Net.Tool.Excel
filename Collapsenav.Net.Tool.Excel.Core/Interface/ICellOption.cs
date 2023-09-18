@@ -11,7 +11,7 @@ public interface ICellOption
     /// <summary>
     /// 表头
     /// </summary>
-    string? ExcelField { get; set; }
+    string ExcelField { get; set; }
     /// <summary>
     /// 属性
     /// </summary>

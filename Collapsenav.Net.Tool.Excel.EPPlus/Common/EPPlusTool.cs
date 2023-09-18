@@ -50,7 +50,7 @@ public partial class EPPlusTool
     /// <summary>
     /// 获取 EPPlus中使用 的 Sheet
     /// </summary>
-    public static ExcelWorksheet EPPlusSheet(string path, string sheetname = null)
+    public static ExcelWorksheet EPPlusSheet(string path, string? sheetname = null)
     {
         var sheets = EPPlusSheets(path);
         return sheetname.IsNull() ? sheets?[ExcelTool.EPPlusZero] : sheets?[sheetname];
@@ -58,7 +58,7 @@ public partial class EPPlusTool
     /// <summary>
     /// 获取 EPPlus中使用 的 Sheet
     /// </summary>
-    public static ExcelWorksheet EPPlusSheet(Stream stream, string sheetname = null)
+    public static ExcelWorksheet EPPlusSheet(Stream stream, string? sheetname = null)
     {
         var sheets = EPPlusSheets(stream);
         return sheetname.IsNull() ? sheets?[ExcelTool.EPPlusZero] : sheets?[sheetname];
@@ -82,7 +82,7 @@ public partial class EPPlusTool
     /// <summary>
     /// 将表格数据转换为T类型的集合
     /// </summary>
-    public static async Task<IEnumerable<T>> ExcelToEntityAsync<T>(IExcelReader reader, ReadConfig<T> config = null)
+    public static async Task<IEnumerable<T>> ExcelToEntityAsync<T>(IExcelReader reader, ReadConfig<T>? config = null)
     {
         config ??= ReadConfig<T>.GenDefaultConfig();
         return await config.ToEntityAsync(reader);

@@ -196,7 +196,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="field"></param>
     /// <param name="prop"></param>
     /// <param name="action"></param>
-    public virtual ReadCellOption<T> GenOption<E>(string field, Expression<Func<T, E>> prop, Func<string, E> action)
+    public virtual ReadCellOption<T> GenOption<E>(string field, Expression<Func<T, E>> prop, Func<string, E>? action)
     {
         return GenOption(field, (PropertyInfo)prop.GetMember(), action);
     }
@@ -215,7 +215,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="field"></param>
     /// <param name="prop"></param>
     /// <param name="action"></param>
-    public virtual ReadCellOption<T> GenOption<E>(string field, PropertyInfo prop, Func<string, E> action)
+    public virtual ReadCellOption<T> GenOption<E>(string field, PropertyInfo prop, Func<string, E>? action)
     {
         return action == null ? GenOption(field, prop) : new ReadCellOption<T>(field, prop, item => action(item));
     }
