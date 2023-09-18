@@ -10,16 +10,16 @@ public class MiniCellReader : IExcelCellReader
     public int Zero => ExcelTool.MiniZero;
     public List<IDictionary<string, object>> _sheet;
     protected List<MiniRow> _rows;
-    protected Stream _stream;
+    public Stream? ExcelStream { get; protected set; }
     protected int rowCount;
     protected int colCount;
     protected ISheetCellReader SheetReader;
-    public MiniCellReader(ISheetCellReader sheetReader, string sheetName = null)
+    public MiniCellReader(ISheetCellReader sheetReader, string? sheetName = null)
     {
         SheetReader = sheetReader;
         if (sheetName.NotEmpty())
         {
-            _stream = SheetReader.SheetStream;
+            ExcelStream = SheetReader.SheetStream;
             Init(sheetName);
         }
         else
@@ -42,7 +42,7 @@ public class MiniCellReader : IExcelCellReader
     }
     private void Init(string sheetName)
     {
-        Init(_stream.Query(sheetName: sheetName));
+        Init(ExcelStream.Query(sheetName: sheetName));
     }
     private void Init(IEnumerable<dynamic> sheetList)
     {
@@ -57,18 +57,18 @@ public class MiniCellReader : IExcelCellReader
     {
         try
         {
-            _stream = stream;
-            Init(_stream.Query());
+            ExcelStream = stream;
+            Init(ExcelStream.Query());
         }
         catch
         {
             Init();
-            _stream = stream;
+            ExcelStream = stream;
         }
     }
     private void Init()
     {
-        _stream = new MemoryStream();
+        ExcelStream = new MemoryStream();
         _sheet = new List<IDictionary<string, object>>(1000);
         _rows = new List<MiniRow>(1000);
         rowCount = 0;
@@ -150,12 +150,12 @@ public class MiniCellReader : IExcelCellReader
 
     public void Dispose()
     {
-        _stream.Dispose();
+        ExcelStream.Dispose();
     }
 
     public void Save(bool autofit = true)
     {
-        SaveTo(_stream);
+        SaveTo(ExcelStream);
     }
 
     /// <summary>
@@ -182,9 +182,9 @@ public class MiniCellReader : IExcelCellReader
     /// </summary>
     public Stream GetStream()
     {
-        _stream ??= new MemoryStream();
-        SaveTo(_stream);
-        return _stream;
+        ExcelStream ??= new MemoryStream();
+        SaveTo(ExcelStream);
+        return ExcelStream;
     }
 
     public IEnumerator<IEnumerable<IReadCell>> GetEnumerator()

@@ -11,18 +11,18 @@ public class NPOICellReader : IExcelCellReader
     public int Zero => ExcelTool.NPOIZero;
     public ISheet _sheet;
     protected IWorkbook _workbook;
-    protected Stream _stream;
+    public Stream? ExcelStream { get; protected set; }
     protected NPOINotCloseStream notCloseStream;
     public IDictionary<string, int> HeaderIndex;
     protected IEnumerable<string> HeaderList;
     protected int rowCount;
     protected ISheetCellReader SheetReader;
-    public NPOICellReader(ISheetCellReader sheetReader, string sheetName = null)
+    public NPOICellReader(ISheetCellReader sheetReader, string? sheetName = null)
     {
         SheetReader = sheetReader;
         if (sheetName.NotEmpty())
         {
-            _stream = SheetReader.SheetStream;
+            ExcelStream = SheetReader.SheetStream;
             Init(sheetName);
         }
         else
@@ -50,13 +50,13 @@ public class NPOICellReader : IExcelCellReader
     }
     private void Init(string sheetName)
     {
-        Init(NPOITool.NPOISheet(_stream, sheetName));
+        Init(NPOITool.NPOISheet(ExcelStream, sheetName));
     }
     private void Init(Stream stream)
     {
-        _stream = stream;
+        ExcelStream = stream;
         notCloseStream ??= new NPOINotCloseStream(stream);
-        var sheet = NPOITool.NPOISheet(_stream);
+        var sheet = NPOITool.NPOISheet(ExcelStream);
         if (sheet == null)
             Init();
         else
@@ -102,7 +102,7 @@ public class NPOICellReader : IExcelCellReader
 
     public void Dispose()
     {
-        _stream?.Dispose();
+        ExcelStream?.Dispose();
         notCloseStream?.Dispose();
         _workbook?.Close();
     }
@@ -127,9 +127,11 @@ public class NPOICellReader : IExcelCellReader
 
     public void Save(bool autofit = true)
     {
-        _stream.Clear();
+        if (ExcelStream == null)
+            return;
+        ExcelStream.Clear();
         SaveTo(notCloseStream, autofit);
-        notCloseStream.CopyTo(_stream);
+        notCloseStream.CopyTo(ExcelStream);
     }
     /// <summary>
     /// 保存到流
@@ -163,12 +165,12 @@ public class NPOICellReader : IExcelCellReader
     public Stream GetStream()
     {
         AutoSize();
-        _stream ??= new MemoryStream();
+        ExcelStream ??= new MemoryStream();
         notCloseStream ??= new NPOINotCloseStream();
         SaveTo(notCloseStream);
-        notCloseStream.CopyTo(_stream);
+        notCloseStream.CopyTo(ExcelStream);
         notCloseStream.SeekToOrigin();
-        _stream.SeekToOrigin();
+        ExcelStream.SeekToOrigin();
         return notCloseStream;
     }
 

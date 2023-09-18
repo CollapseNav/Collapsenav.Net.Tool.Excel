@@ -4,21 +4,21 @@ public static partial class NPOIExporOperation
     /// <summary>
     /// 列表数据导出到excel
     /// </summary>
-    public static async Task<Stream> NPOIExportAsync<T>(this ExportConfig<T> config, IEnumerable<T> data = null)
+    public static async Task<Stream> NPOIExportAsync<T>(this ExportConfig<T> config, IEnumerable<T>? data = null)
     {
         return await config.ExportAsync(data, ExcelType.NPOI);
     }
     /// <summary>
     /// 列表数据导出到excel
     /// </summary>
-    public static async Task<Stream> NPOIExportAsync<T>(this ExportConfig<T> config, string filePath, IEnumerable<T> data = null)
+    public static async Task<Stream> NPOIExportAsync<T>(this ExportConfig<T> config, string filePath, IEnumerable<T>? data = null)
     {
         return await config.ExportAsync(filePath, data, ExcelType.NPOI);
     }
     /// <summary>
     /// 列表数据导出到excel
     /// </summary>
-    public static async Task<Stream> NPOIExportAsync<T>(this ExportConfig<T> config, Stream stream, IEnumerable<T> data = null)
+    public static async Task<Stream> NPOIExportAsync<T>(this ExportConfig<T> config, Stream stream, IEnumerable<T>? data = null)
     {
         return await config.ExportAsync(stream, data, ExcelType.NPOI);
     }

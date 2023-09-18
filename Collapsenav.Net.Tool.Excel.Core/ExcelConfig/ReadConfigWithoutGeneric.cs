@@ -177,7 +177,8 @@ public class ReadConfig : ReadConfig<object>
     /// </summary>
     public override async Task<IEnumerable<object>> ToEntityAsync(IExcelReader sheet)
     {
-        return await Task.Factory.StartNew(() => IsShuffle ? ToEntity(sheet).Shuffle() : ToEntity(sheet));
+        return await Task.Factory.StartNew(() => ToEntity(sheet));
+        // return await Task.Factory.StartNew(() => IsShuffle ? ToEntity(sheet).Shuffle() : ToEntity(sheet));
     }
 
     public static ReadConfig GenConfigBySummary(string typeName)

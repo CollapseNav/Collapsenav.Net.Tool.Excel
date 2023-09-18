@@ -18,13 +18,9 @@ public class EPPlusSheetCellReader : ISheetCellReader
             return Sheets[sheetName];
         }
     }
-
-    public Stream SheetStream { get; private set; }
-
+    public Stream SheetStream { get; protected set; }
     public IEnumerable<IExcelCellReader> Readers { get; private set; }
-
     public IDictionary<string, IExcelCellReader> Sheets { get; private set; }
-
     public EPPlusSheetCellReader(Stream stream)
     {
         Init(stream);

@@ -9,7 +9,7 @@ public class EPPlusCellReader : IExcelCellReader
     public int Zero => ExcelTool.EPPlusZero;
     public ExcelWorksheet _sheet;
     protected ExcelPackage _pack;
-    protected Stream _stream;
+    public Stream? ExcelStream { get; protected set; }
     protected IDictionary<string, int> HeaderIndex;
     protected IEnumerable<string> HeaderList;
     protected int rowCount;
@@ -19,7 +19,7 @@ public class EPPlusCellReader : IExcelCellReader
         SheetReader = sheetReader;
         if (sheetName.NotEmpty())
         {
-            _stream = SheetReader.SheetStream;
+            ExcelStream = SheetReader.SheetStream;
             Init(sheetName);
         }
         else
@@ -46,17 +46,17 @@ public class EPPlusCellReader : IExcelCellReader
     }
     private void Init(string sheetName)
     {
-        Init(EPPlusTool.EPPlusSheet(_stream, sheetName));
+        Init(EPPlusTool.EPPlusSheet(ExcelStream, sheetName));
     }
     private void Init(Stream stream)
     {
         stream.SeekToOrigin();
         // 使用传入的流, 可在 Save 时修改/覆盖
-        _stream = stream;
-        var sheets = EPPlusTool.EPPlusSheets(_stream);
+        ExcelStream = stream;
+        var sheets = EPPlusTool.EPPlusSheets(ExcelStream);
         // 若传入的文件中无法解析出 sheets ,则使用默认的无参初始化
         if (sheets?.Count > 0)
-            Init(EPPlusTool.EPPlusSheet(_stream));
+            Init(EPPlusTool.EPPlusSheet(ExcelStream));
         else
             Init();
     }
@@ -93,7 +93,7 @@ public class EPPlusCellReader : IExcelCellReader
     public IReadCell this[string field, int row] => new EPPlusCell(_sheet.Cells[row + Zero, HeaderIndex[field] + Zero]);
     public void Dispose()
     {
-        _stream?.Dispose();
+        ExcelStream?.Dispose();
         _pack?.Dispose();
     }
     public void AutoSize()
@@ -104,7 +104,7 @@ public class EPPlusCellReader : IExcelCellReader
     }
     public void Save(bool autofit = true)
     {
-        SaveTo(_stream, autofit);
+        SaveTo(ExcelStream, autofit);
     }
     /// <summary>
     /// 保存到流
@@ -131,9 +131,9 @@ public class EPPlusCellReader : IExcelCellReader
     /// </summary>
     public Stream GetStream()
     {
-        _stream ??= new MemoryStream();
-        SaveTo(_stream);
-        return _stream;
+        ExcelStream ??= new MemoryStream();
+        SaveTo(ExcelStream);
+        return ExcelStream;
     }
     public IEnumerator<IEnumerable<IReadCell>> GetEnumerator()
     {

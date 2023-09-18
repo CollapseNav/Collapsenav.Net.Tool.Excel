@@ -2,6 +2,7 @@ namespace Collapsenav.Net.Tool.Excel;
 
 public interface IExcelCellReader : IExcelContainer<IReadCell>, IExcelHeader
 {
+    Stream? ExcelStream { get; }
     /// <summary>
     /// 原地保存, 不创建新的文件
     /// </summary>

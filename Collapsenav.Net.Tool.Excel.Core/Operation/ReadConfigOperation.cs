@@ -23,10 +23,10 @@ public partial class ReadConfig<T>
                     if (option.ExcelField.NotNull())
                     {
                         var value = dataRow[header[option.ExcelField]];
-                        option.Prop.SetValue(obj, option.Action == null ? value : option.Action(value));
+                        option.Prop!.SetValue(obj, option.Action == null ? value : option.Action(value));
                     }
                     else
-                        option.Prop.SetValue(obj, option.Action == null ? null : option.Action(string.Empty));
+                        option.Prop!.SetValue(obj, option.Action == null ? null : option.Action(string.Empty));
                 }
                 Init?.Invoke(obj);
                 yield return obj;
@@ -38,7 +38,8 @@ public partial class ReadConfig<T>
     /// </summary>
     public virtual async Task<IEnumerable<T>> ToEntityAsync(IExcelReader sheet)
     {
-        return await Task.Factory.StartNew(() => IsShuffle ? ToEntity(sheet).Shuffle() : ToEntity(sheet));
+        return await Task.Factory.StartNew(() => ToEntity(sheet));
+        // return await Task.Factory.StartNew(() => IsShuffle ? ToEntity(sheet).Shuffle() : ToEntity(sheet));
     }
 
 

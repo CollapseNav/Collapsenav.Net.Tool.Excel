@@ -24,7 +24,7 @@ public partial class NPOITool
     /// <summary>
     /// 获取 NPOI中使用 的 Sheet
     /// </summary>
-    public static ISheet NPOISheet(string path, string sheetname = null)
+    public static ISheet NPOISheet(string path, string? sheetname = null)
     {
         var workbook = NPOIWorkbook(path);
         return sheetname.IsNull() ? workbook.GetSheetAt(ExcelTool.NPOIZero) : workbook.GetSheet(sheetname);
@@ -32,7 +32,7 @@ public partial class NPOITool
     /// <summary>
     /// 获取 NPOI中使用 的 Sheet
     /// </summary>
-    public static ISheet NPOISheet(Stream stream, string sheetname = null)
+    public static ISheet NPOISheet(Stream stream, string? sheetname = null)
     {
         var workbook = NPOIWorkbook(stream);
         if (workbook.NumberOfSheets == 0)
@@ -70,8 +70,8 @@ public partial class NPOITool
     /// </summary>
     public static IDictionary<string, int> HeadersWithIndex(ISheet sheet)
     {
-        var headers = sheet.GetRow(ExcelTool.NPOIZero)?.Cells
-        .Where(item => item.ToString().NotNull())
+        var headers = sheet.GetRow(ExcelTool.NPOIZero)?.Cells?
+        .Where(item => item.ToString().NotNull())?
         .ToDictionary(item => item.ToString()?.Trim(), item => item.ColumnIndex);
         return headers;
     }

@@ -9,7 +9,6 @@ namespace Collapsenav.Net.Tool.Excel;
 /// </summary>
 public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
 {
-    public bool IsShuffle { get; set; } = true;
     private readonly Stream? ExcelStream;
     /// <summary>
     /// 读取成功之后调用的针对T的委托
@@ -49,8 +48,10 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     public ReadConfig(IExcelConfig<T, BaseCellOption<T>>? config) : this()
     {
         if (config != null)
+        {
             FieldOption = config.FieldOption.Select(item => new ReadCellOption<T>(item));
-        Data = config?.Data;
+            Data = config.Data;
+        }
     }
     public ReadConfig(IEnumerable<(string, string)>? kvs) : this()
     {

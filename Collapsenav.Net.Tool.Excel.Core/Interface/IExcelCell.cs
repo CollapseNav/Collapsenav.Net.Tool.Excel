@@ -15,6 +15,9 @@ public interface IReadCell
     /// 值类型
     /// </summary>
     Type? ValueType { get; }
+    /// <summary>
+    /// 单元格的值
+    /// </summary>
     object? Value { get; set; }
     /// <summary>
     /// 从其他单元格读取值
