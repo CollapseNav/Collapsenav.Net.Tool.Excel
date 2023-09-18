@@ -10,7 +10,6 @@
         <ProjectUrl>http://doc.collapsenav.cn/docs/Excel/</ProjectUrl>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\Tool\Collapsenav.Net.Tool\Collapsenav.Net.Tool.csproj" />
         <ProjectReference Include="..\Collapsenav.Net.Tool.Excel.Core\Collapsenav.Net.Tool.Excel.Core.csproj" />
         <ProjectReference Include="..\Collapsenav.Net.Tool.Excel.NPOI\Collapsenav.Net.Tool.Excel.NPOI.csproj" />
         <ProjectReference Include="..\Collapsenav.Net.Tool.Excel.EPPlus\Collapsenav.Net.Tool.Excel.EPPlus.csproj" />

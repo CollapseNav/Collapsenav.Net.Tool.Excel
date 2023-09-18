@@ -5,20 +5,23 @@ namespace Collapsenav.Net.Tool.Excel;
 public partial class ExportConfig<T> : ExcelConfig<T, ExportCellOption<T>>
 {
     public ExportConfig() : base() { }
-    public ExportConfig(IEnumerable<T> data, IEnumerable<(string, string)> kvs = null) : this()
+    public ExportConfig(IEnumerable<T>? data, IEnumerable<(string, string)>? kvs = null) : this()
     {
-        Data = data;
+        Data = data ?? Enumerable.Empty<T>();
         if (Data.NotEmpty())
-            DtoType = Data.First().GetType();
+            DtoType = Data!.GetType().GenericTypeArguments.First() ?? typeof(T);
         InitFieldOption(kvs);
     }
     /// <summary>
     /// 使用基础的 excelconfig 初始化
     /// </summary>
-    public ExportConfig(IExcelConfig<T, BaseCellOption<T>> config)
+    public ExportConfig(IExcelConfig<T, BaseCellOption<T>>? config)
     {
-        FieldOption = config.FieldOption.Select(item => new ExportCellOption<T>(item));
-        Data = config.Data;
+        if (config != null)
+        {
+            FieldOption = config.FieldOption.Select(item => new ExportCellOption<T>(item));
+            Data = config.Data;
+        }
     }
 
     /// <summary>

@@ -12,35 +12,37 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
         FieldOption = new List<CellOption>();
         DtoType = typeof(T);
     }
-    public ExcelConfig(IEnumerable<(string, string)> kvs) : this()
+    public ExcelConfig(IEnumerable<(string, string)>? kvs) : this()
     {
         InitFieldOption(kvs);
     }
 
-    public ExcelConfig(IEnumerable<StringCellOption> options) : this()
+    public ExcelConfig(IEnumerable<StringCellOption>? options) : this()
     {
-        FieldOption = options.Select(item => new CellOption
+        FieldOption = options?.Select(item => new CellOption
         {
             ExcelField = item.FieldName,
             PropName = item.PropName,
-        });
+        }) ?? Enumerable.Empty<CellOption>();
     }
     public Type DtoType { get; protected set; }
     public virtual IEnumerable<CellOption> FieldOption { get; set; }
     public IEnumerable<T> Data
     {
-        get => data; set
+        get => data ?? Enumerable.Empty<T>(); set
         {
             data = value;
             if (data.NotEmpty())
-                DtoType = data.First().GetType();
+                DtoType = data!.GetType().GenericTypeArguments.First();
+            else
+                DtoType = typeof(T);
         }
     }
-    private IEnumerable<T> data;
-    public virtual IEnumerable<string> Headers { get => FieldOption.Select(item => item.ExcelField); }
+    private IEnumerable<T>? data;
+    public virtual IEnumerable<string>? Headers { get => FieldOption?.Select(item => item.ExcelField ?? string.Empty); }
 
-    protected IDictionary<string, int> headerIndex;
-    public virtual IDictionary<string, int> HeadersWithIndex
+    protected IDictionary<string, int>? headerIndex;
+    public virtual IDictionary<string, int>? HeadersWithIndex
     {
         get
         {
@@ -54,27 +56,29 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     /// 通过元组初始化配置
     /// </summary>
     /// <param name="kvs"></param>
-    public virtual void InitFieldOption(IEnumerable<(string Key, string Value)> kvs)
+    public virtual void InitFieldOption(IEnumerable<(string Key, string Value)>? kvs)
     {
         FieldOption = new List<CellOption>();
         if (kvs.NotEmpty())
         {
-            foreach (var (Key, Value) in kvs)
+            foreach (var (Key, Value) in kvs!)
                 Add(Key, Value);
         }
     }
     /// <summary>
     /// 根据给出的表头筛选options
     /// </summary>
-    public void FilterOptionByHeaders(IEnumerable<string> headers)
+    public void FilterOptionByHeaders(IEnumerable<string>? headers)
     {
         FieldOption = FilterOptionByHeaders(FieldOption, headers);
     }
     /// <summary>
     /// 根据给出的表头筛选options
     /// </summary>
-    public static IEnumerable<CellOption> FilterOptionByHeaders(IEnumerable<CellOption> options, IEnumerable<string> headers)
+    public static IEnumerable<CellOption> FilterOptionByHeaders(IEnumerable<CellOption>? options, IEnumerable<string>? headers)
     {
+        if (options == null || headers == null)
+            return Enumerable.Empty<CellOption>();
         return options.Where(item => headers.Where(head => head == item.ExcelField).Any());
     }
     public virtual IExcelConfig<T, CellOption> Add(CellOption option)
@@ -113,7 +117,7 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     /// <summary>
     /// 直接根据属性名称创建配置
     /// </summary>
-    public static IExcelConfig<T, CellOption> GenConfigByProps(IExcelConfig<T, CellOption> config = null)
+    public static IExcelConfig<T, CellOption> GenConfigByProps(IExcelConfig<T, CellOption>? config = null)
     {
         config ??= new ExcelConfig<T, CellOption>();
         config.ClearFieldOption();
@@ -125,35 +129,41 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     /// <summary>
     /// 根据 T 中设置的 ExcelAttribute 创建配置
     /// </summary>
-    public static IExcelConfig<T, CellOption> GenConfigByAttribute<Attr>(IExcelConfig<T, CellOption> config = null) where Attr : ExcelAttribute
+    public static IExcelConfig<T, CellOption> GenConfigByAttribute<Attr>(IExcelConfig<T, CellOption>? config = null) where Attr : ExcelAttribute
     {
         config ??= new ExcelConfig<T, CellOption>();
         config.ClearFieldOption();
         var attrData = config.DtoType.AttrValues<Attr>();
         foreach (var prop in attrData)
-            config.Add(prop.Value.ExcelField, prop.Key);
+        {
+            if (prop.Value != null && prop.Value.ExcelField.NotEmpty())
+                config.Add(prop.Value!.ExcelField, prop.Key);
+        }
         return config;
     }
 
     /// <summary>
     /// 通过注释生成配置
     /// </summary>
-    public static IExcelConfig<T, CellOption> GenConfigBySummary(Type type = null, IExcelConfig<T, CellOption> config = null)
+    public static IExcelConfig<T, CellOption> GenConfigBySummary(Type? type = null, IExcelConfig<T, CellOption>? config = null)
     {
         config ??= new ExcelConfig<T, CellOption>();
         config.ClearFieldOption();
-        type ??= config?.DtoType ?? typeof(T);
+        type ??= config.DtoType;
         // 获取所有注释node
-        var nodes = XmlExt.GetXmlDocuments().GetSummaryNodes().Where(item => item.FullName.Contains(type.FullName)).ToArray();
-        var kvs = type.BuildInTypePropNames().Select(propName =>
+        var nodes = XmlExt.GetXmlDocuments().GetSummaryNodes().Where(item => item.FullName.Contains(type.FullName ?? string.Empty)).ToArray();
+        var kvs = type!.BuildInTypePropNames()?.Select(propName =>
         {
             var node = nodes.FirstOrDefault(item => item.FullName.Split('.').Last() == propName);
             if (node is null)
-                return new KeyValuePair<string, PropertyInfo>(propName, type.GetProperty(propName));
-            return new KeyValuePair<string, PropertyInfo>(node.Summary, type.GetProperty(propName));
+                return new KeyValuePair<string, PropertyInfo?>(propName, type.GetProperty(propName));
+            return new KeyValuePair<string, PropertyInfo?>(node.Summary ?? string.Empty, type.GetProperty(propName));
         }).ToArray();
-        foreach (var node in kvs)
-            config.Add(new CellOption { ExcelField = node.Key, Prop = node.Value });
+        if (kvs.NotEmpty())
+        {
+            foreach (var node in kvs!)
+                config.Add(new CellOption { ExcelField = node.Key, Prop = node.Value });
+        }
         return config;
     }
 

@@ -9,11 +9,11 @@ public class ExportCellOption<T> : BaseCellOption<T>
     public ExportCellOption() { }
     public ExportCellOption(ICellOption cellOption) : base(cellOption) { }
 
-    public ExportCellOption(string excelField, string propName, Func<T, object> action = null) : base(excelField, propName)
+    public ExportCellOption(string excelField, string propName, Func<T, object?>? action = null) : base(excelField, propName)
     {
         Action = action;
     }
-    public ExportCellOption(string excelField, PropertyInfo prop, Func<T, object> action = null) : base(excelField, prop)
+    public ExportCellOption(string excelField, PropertyInfo prop, Func<T, object?>? action = null) : base(excelField, prop)
     {
         Action = action;
     }
@@ -21,15 +21,15 @@ public class ExportCellOption<T> : BaseCellOption<T>
     /// <summary>
     /// 转换 表格 数据的方法
     /// </summary>
-    public Func<T, object> Action
+    public Func<T, object?>? Action
     {
         get
         {
             // 未设置action时使用默认委托
-            action ??= item => item.GetValue(PropName);
+            action ??= item => item.GetValue(PropName ?? string.Empty);
             return action;
         }
         set => action = value;
     }
-    private Func<T, object> action;
+    private Func<T, object?>? action;
 }

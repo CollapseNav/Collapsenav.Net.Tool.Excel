@@ -11,13 +11,16 @@ public interface ICellOption
     /// <summary>
     /// 表头
     /// </summary>
-    string ExcelField { get; set; }
+    string? ExcelField { get; set; }
     /// <summary>
     /// 属性
     /// </summary>
-    PropertyInfo Prop { get; set; }
+    PropertyInfo? Prop { get; set; }
     /// <summary>
     /// 属性名称
     /// </summary>
-    string PropName { get; set; }
+    /// <remarks>
+    /// 当已设置 Prop 时, PropName 从Prop 中获取
+    /// </remarks>
+    string? PropName { get; set; }
 }

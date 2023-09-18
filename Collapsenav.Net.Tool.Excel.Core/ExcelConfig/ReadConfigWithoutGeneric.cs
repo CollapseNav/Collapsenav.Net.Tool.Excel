@@ -9,18 +9,18 @@ namespace Collapsenav.Net.Tool.Excel;
 /// <remarks>可以不使用泛型定义，但是必须有类型数据</remarks>
 public class ReadConfig : ReadConfig<object>
 {
-    public ReadConfig(Type type, IEnumerable<(string, string, string)> kvs) : base()
+    public ReadConfig(Type type, IEnumerable<(string, string, string)>? kvs) : base()
     {
         DtoType = type;
         InitFieldOption(kvs);
     }
-    public ReadConfig(string typeName, IEnumerable<(string, string, string)> kvs) : this(GetMatchType(typeName), kvs) { }
-    public ReadConfig(Type type, IEnumerable<(string, string)> kvs = null) : base()
+    public ReadConfig(string typeName, IEnumerable<(string, string, string)>? kvs) : this(GetMatchType(typeName), kvs) { }
+    public ReadConfig(Type type, IEnumerable<(string, string)>? kvs = null) : base()
     {
         DtoType = type;
         InitFieldOption(kvs);
     }
-    public ReadConfig(string typeName, IEnumerable<(string, string)> kvs = null) : base()
+    public ReadConfig(string typeName, IEnumerable<(string, string)>? kvs = null) : base()
     {
         var type = GetMatchType(typeName);
         if (type != null)
@@ -28,7 +28,7 @@ public class ReadConfig : ReadConfig<object>
         InitFieldOption(kvs);
     }
 
-    public ReadConfig(string typeName, IEnumerable<StringCellOption> options)
+    public ReadConfig(string typeName, IEnumerable<StringCellOption>? options)
     {
         var type = GetMatchType(typeName);
         if (type != null)
@@ -60,12 +60,12 @@ public class ReadConfig : ReadConfig<object>
     /// 通过字典初始化配置
     /// </summary>
     /// <param name="kvs">Key为表头名称, Value为属性名称</param>
-    public virtual void InitFieldOption(IEnumerable<(string Key, string Value, string Func)> kvs)
+    public virtual void InitFieldOption(IEnumerable<(string Key, string Value, string Func)>? kvs)
     {
         FieldOption = new List<ReadCellOption<object>>();
         if (kvs.NotEmpty())
         {
-            foreach (var (Key, Value, Func) in kvs)
+            foreach (var (Key, Value, Func) in kvs!)
                 Add(Key, Value, Func);
         }
     }
@@ -74,12 +74,12 @@ public class ReadConfig : ReadConfig<object>
     /// 通过字典初始化配置
     /// </summary>
     /// <param name="kvs">Key为表头名称, Value为属性名称</param>
-    public override void InitFieldOption(IEnumerable<(string Key, string Value)> kvs)
+    public override void InitFieldOption(IEnumerable<(string Key, string Value)>? kvs)
     {
         FieldOption = new List<ReadCellOption<object>>();
         if (kvs.NotEmpty())
         {
-            foreach (var (Key, Value) in kvs)
+            foreach (var (Key, Value) in kvs!)
                 Add(Key, Value);
         }
     }
@@ -185,7 +185,7 @@ public class ReadConfig : ReadConfig<object>
         config.FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(config.DtoType).FieldOption.Select(item => new ReadCellOption<object>(item));
         return config;
     }
-    public static new ReadConfig GenConfigBySummary(Type type)
+    public static ReadConfig GenConfigBySummary(Type type)
     {
         var config = new ReadConfig(type)
         {

@@ -5,7 +5,7 @@ public partial class ExportConfig<T>
     /// <summary>
     /// 导出excel
     /// </summary>
-    public async Task<Stream> ExportAsync(IExcelCellReader excel, IEnumerable<T> data = null)
+    public async Task<Stream> ExportAsync(IExcelCellReader excel, IEnumerable<T>? data = null)
     {
         await Task.Factory.StartNew(() =>
         {
@@ -20,7 +20,7 @@ public partial class ExportConfig<T>
     /// <summary>
     /// 数据实体导出为Excel
     /// </summary>
-    public async Task<Stream> ExportAsync(IEnumerable<T> data = null, ExcelType? excelType = null)
+    public async Task<Stream> ExportAsync(IEnumerable<T>? data = null, ExcelType? excelType = null)
     {
         using var stream = new MemoryStream();
         return await ExportAsync(stream, data, excelType);
@@ -28,7 +28,7 @@ public partial class ExportConfig<T>
     /// <summary>
     /// 数据实体导出为Excel
     /// </summary>
-    public async Task<Stream> ExportAsync(string path, IEnumerable<T> data = null, ExcelType? excelType = null)
+    public async Task<Stream> ExportAsync(string path, IEnumerable<T>? data = null, ExcelType? excelType = null)
     {
         using var fs = path.OpenCreateReadWriteShareStream();
         return await ExportAsync(fs, data, excelType);
@@ -36,7 +36,7 @@ public partial class ExportConfig<T>
     /// <summary>
     /// 数据实体导出为Excel
     /// </summary>
-    public async Task<Stream> ExportAsync(Stream stream, IEnumerable<T> data = null, ExcelType? excelType = null)
+    public async Task<Stream> ExportAsync(Stream stream, IEnumerable<T>? data = null, ExcelType? excelType = null)
     {
         using IExcelCellReader read = ExcelTool.GetCellReader(stream, excelType);
         var exportStream = new MemoryStream();

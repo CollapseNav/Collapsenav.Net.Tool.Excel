@@ -6,14 +6,14 @@ public class MulitSheetsExportConfig
     {
         Datas = new();
     }
-    public MulitSheetsExportConfig(Dictionary<string, IEnumerable<object>> datas)
+    public MulitSheetsExportConfig(Dictionary<string, IEnumerable<object>> datas) : this()
     {
         BuildExportConfig(datas);
     }
     public List<MulitSheetsExportConfigItem> Datas { get; set; }
     private void BuildExportConfig(Dictionary<string, IEnumerable<object>> dicts)
     {
-        Datas = dicts.Select(item =>
+        Datas ??= dicts.Select(item =>
         {
             return new MulitSheetsExportConfigItem(item.Key, item.Value, ExportConfig.InitByExportConfig(ExportConfig.GenDefaultConfig(item.Value)));
         }).ToList();

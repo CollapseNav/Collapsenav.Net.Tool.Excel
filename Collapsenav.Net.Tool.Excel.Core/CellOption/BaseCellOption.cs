@@ -42,37 +42,37 @@ public class BaseCellOption<T> : ICellOption
     /// <summary>
     /// 对应excel中的表头字段
     /// </summary>
-    public virtual string ExcelField { get; set; }
+    public virtual string? ExcelField { get; set; }
     /// <summary>
     /// 对应字段的属性(实际上包含PropName)
     /// </summary>
-    public virtual PropertyInfo Prop
+    public virtual PropertyInfo? Prop
     {
         get => prop;
         set
         {
             prop = value;
-            propName = prop.Name;
+            propName = prop?.Name;
             // 当有确切的属性时, 修改DtoType
-            DtoType = prop.DeclaringType;
+            DtoType = prop?.DeclaringType;
         }
     }
-    protected PropertyInfo prop;
+    protected PropertyInfo? prop;
     /// <summary>
     /// 就是一个看起来比较方便的标识
     /// </summary>
-    public virtual string PropName
+    public virtual string? PropName
     {
         get => propName;
         set
         {
             propName = value;
-            prop = DtoType.GetProperty(propName);
+            prop = DtoType?.GetProperty(propName ?? string.Empty);
         }
     }
-    protected string propName;
+    protected string? propName;
     /// <summary>
     /// 有时候使用的泛型只是基类, 所以设置一个 DtoType 尝试记录真实类型
     /// </summary>
-    public Type DtoType { get; protected set; }
+    public Type? DtoType { get; protected set; }
 }

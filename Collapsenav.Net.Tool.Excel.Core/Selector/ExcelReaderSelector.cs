@@ -26,7 +26,7 @@ public class ExcelReaderSelector
 
     public static IExcelReader GetExcelReader(object obj)
     {
-        return GetExcelReader(obj, null);
+        return GetExcelReader(obj, string.Empty);
     }
     public static IExcelReader GetExcelReader(object obj, string excelType)
     {
@@ -52,6 +52,6 @@ public class ExcelReaderSelector
     }
     public static IExcelReader GetExcelReader(Stream stream)
     {
-        return GetExcelReader(stream, null);
+        return GetExcelReader(stream, string.Empty);
     }
 }

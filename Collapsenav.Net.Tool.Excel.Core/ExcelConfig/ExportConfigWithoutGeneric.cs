@@ -13,13 +13,13 @@ public class ExportConfig : ExportConfig<object>
     /// <summary>
     /// 必传data数据确定类型
     /// </summary>
-    public ExportConfig(IEnumerable<object> data, IEnumerable<(string, string)> kvs = null) : base(data, kvs) { }
-    public ExportConfig(IEnumerable<object> data, IEnumerable<(string, string, string)> kvs) : base(data)
+    public ExportConfig(IEnumerable<object>? data, IEnumerable<(string, string)>? kvs = null) : base(data, kvs) { }
+    public ExportConfig(IEnumerable<object>? data, IEnumerable<(string, string, string)>? kvs) : base(data)
     {
         InitFieldOption(kvs);
     }
 
-    public ExportConfig(IEnumerable<object> data, IEnumerable<StringCellOption> options) : base(data)
+    public ExportConfig(IEnumerable<object>? data, IEnumerable<StringCellOption>? options) : base(data)
     {
         InitFieldOption(options.Select(item => (item.FieldName, item.PropName, item.Func)));
     }
@@ -27,12 +27,12 @@ public class ExportConfig : ExportConfig<object>
     /// 通过字典初始化配置
     /// </summary>
     /// <param name="kvs">Key为表头名称, Value为属性名称</param>
-    public void InitFieldOption(IEnumerable<(string Key, string Value, string Func)> kvs)
+    public void InitFieldOption(IEnumerable<(string Key, string Value, string Func)>? kvs)
     {
         FieldOption = new List<ExportCellOption<object>>();
         if (kvs.NotEmpty())
         {
-            foreach (var (Key, Value, Func) in kvs)
+            foreach (var (Key, Value, Func) in kvs!)
                 Add(Key, Value, Func);
         }
     }
@@ -77,18 +77,19 @@ public class ExportConfig : ExportConfig<object>
             throw new NullReferenceException("data 不能为空");
         var config = new ExportConfig(data)
         {
-            FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(data.First().GetType()).FieldOption.Select(option => new ExportCellOption<object>(option))
+            FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(data.First().GetType()).FieldOption?.Select(option => new ExportCellOption<object>(option))
         };
         return config;
     }
 
-    public static ExportConfig InitByExportConfig<T>(ExportConfig<T> config) where T : class
+    public static ExportConfig InitByExportConfig<T>(ExportConfig<T>? config) where T : class
     {
-        var exportConfig = new ExportConfig()
+        var exportConfig = new ExportConfig();
+        if (config != null)
         {
-            FieldOption = config.FieldOption.Select(item => new ExportCellOption<object>(item.ExcelField, item.Prop, (data) => item.Action((T)data))),
-            Data = config.Data,
-        };
+            exportConfig.FieldOption = config.FieldOption.Select(item => new ExportCellOption<object>(item.ExcelField, item.Prop, (data) => item.Action((T)data)));
+            exportConfig.Data = config.Data;
+        }
         // var exportOptions = exportConfig.FieldOption;
         // exportConfig.FieldOption = config.FieldOption.Select(item => new ExportCellOption<object>(item.ExcelField, item.Prop, (data) => item.Action((T)data)));
         return exportConfig;

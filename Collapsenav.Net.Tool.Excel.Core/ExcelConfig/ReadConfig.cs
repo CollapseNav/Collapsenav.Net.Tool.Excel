@@ -10,11 +10,11 @@ namespace Collapsenav.Net.Tool.Excel;
 public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
 {
     public bool IsShuffle { get; set; } = true;
-    private readonly Stream ExcelStream;
+    private readonly Stream? ExcelStream;
     /// <summary>
     /// 读取成功之后调用的针对T的委托
     /// </summary>
-    public Func<T, T> Init { get; protected set; }
+    public Func<T, T>? Init { get; protected set; }
     public ReadConfig() : base()
     {
         Init = null;
@@ -25,7 +25,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="filepath"> 文件路径 </param>
     /// <param name="kvs"></param>
     /// <remarks>从路径中加载文件, 在后续的操作中可以不传</remarks>
-    public ReadConfig(string filepath, IEnumerable<(string, string)> kvs = null) : this(kvs)
+    public ReadConfig(string filepath, IEnumerable<(string, string)>? kvs = null) : this(kvs)
     {
         ExcelStream = new MemoryStream();
         filepath.IsXls();
@@ -38,20 +38,21 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="stream">文件流</param>
     /// <param name="kvs"></param>
     /// <remarks>从流中加载, 在后续的操作中可以不传文件</remarks>
-    public ReadConfig(Stream stream, IEnumerable<(string, string)> kvs = null) : this(kvs)
+    public ReadConfig(Stream? stream, IEnumerable<(string, string)>? kvs = null) : this(kvs)
     {
         ExcelStream = new MemoryStream();
-        stream.CopyTo(ExcelStream);
+        stream?.CopyTo(ExcelStream);
     }
     /// <summary>
     /// 使用基础的 excelconfig 初始化
     /// </summary>
-    public ReadConfig(IExcelConfig<T, BaseCellOption<T>> config) : this()
+    public ReadConfig(IExcelConfig<T, BaseCellOption<T>>? config) : this()
     {
-        FieldOption = config.FieldOption.Select(item => new ReadCellOption<T>(item));
-        Data = config.Data;
+        if (config != null)
+            FieldOption = config.FieldOption.Select(item => new ReadCellOption<T>(item));
+        Data = config?.Data;
     }
-    public ReadConfig(IEnumerable<(string, string)> kvs) : this()
+    public ReadConfig(IEnumerable<(string, string)>? kvs) : this()
     {
         InitFieldOption(kvs);
     }
@@ -82,7 +83,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="field">表头列</param>
     /// <param name="prop">T的属性</param>
     /// <param name="action">对单元格字符串的操作</param>
-    public virtual ReadConfig<T> Require<E>(string field, Expression<Func<T, E>> prop, Func<string, E> action = null)
+    public virtual ReadConfig<T> Require<E>(string field, Expression<Func<T, E>> prop, Func<string, E>? action = null)
     {
         var option = GenOption(field, prop, action);
         var func = option.Action;
@@ -102,7 +103,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="field">表头列</param>
     /// <param name="prop">T的属性</param>
     /// <param name="action">对单元格字符串的操作</param>
-    public virtual ReadConfig<T> RequireIf<E>(bool check, string field, Expression<Func<T, E>> prop, Func<string, E> action = null)
+    public virtual ReadConfig<T> RequireIf<E>(bool check, string field, Expression<Func<T, E>> prop, Func<string, E>? action = null)
     {
         return check ? Require(field, prop, action) : this;
     }
@@ -112,7 +113,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="field">表头列</param>
     /// <param name="prop">T的属性</param>
     /// <param name="action">对单元格字符串的操作</param>
-    public virtual ReadConfig<T> Add<E>(string field, Expression<Func<T, E>> prop, Func<string, E> action = null)
+    public virtual ReadConfig<T> Add<E>(string field, Expression<Func<T, E>> prop, Func<string, E>? action = null)
     {
         Add(GenOption(field, prop, action));
         return this;
@@ -124,7 +125,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="field">表头列</param>
     /// <param name="prop">T的属性</param>
     /// <param name="action">对单元格字符串的操作</param>
-    public virtual ReadConfig<T> AddIf<E>(bool check, string field, Expression<Func<T, E>> prop, Func<string, E> action = null)
+    public virtual ReadConfig<T> AddIf<E>(bool check, string field, Expression<Func<T, E>> prop, Func<string, E>? action = null)
     {
         return check ? Add(field, prop, action) : this;
     }
@@ -134,7 +135,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="field">表头列</param>
     /// <param name="prop">属性</param>
     /// <param name="action">对单元格字符串的操作</param>
-    public virtual ReadConfig<T> Add(string field, PropertyInfo prop, Func<string, object> action = null)
+    public virtual ReadConfig<T> Add(string field, PropertyInfo prop, Func<string, object>? action = null)
     {
         Add(GenOption(field, prop, action));
         return this;
@@ -146,7 +147,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     /// <param name="field">表头列</param>
     /// <param name="prop">属性</param>
     /// <param name="action">对单元格字符串的操作</param>
-    public virtual ReadConfig<T> AddIf(bool check, string field, PropertyInfo prop, Func<string, object> action = null)
+    public virtual ReadConfig<T> AddIf(bool check, string field, PropertyInfo prop, Func<string, object>? action = null)
     {
         return check ? Add(field, prop, action) : this;
     }

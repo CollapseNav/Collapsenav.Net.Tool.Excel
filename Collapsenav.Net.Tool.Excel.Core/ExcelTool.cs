@@ -55,7 +55,7 @@ public partial class ExcelTool
     /// <summary>
     /// 将表格数据转换为T类型的集合
     /// </summary>
-    public static async Task<IEnumerable<T>> ExcelToEntityAsync<T>(string path, ReadConfig<T> config = null)
+    public static async Task<IEnumerable<T>> ExcelToEntityAsync<T>(string path, ReadConfig<T>? config = null)
     {
         using var fs = path.OpenReadShareStream();
         return await ExcelToEntityAsync(fs, config);
@@ -63,7 +63,7 @@ public partial class ExcelTool
     /// <summary>
     /// 将表格数据转换为T类型的集合
     /// </summary>
-    public static async Task<IEnumerable<T>> ExcelToEntityAsync<T>(Stream stream, ReadConfig<T> config = null)
+    public static async Task<IEnumerable<T>> ExcelToEntityAsync<T>(Stream stream, ReadConfig<T>? config = null)
     {
         var reader = GetExcelReader(stream);
         return await ExcelToEntityAsync(reader, config);
@@ -71,7 +71,7 @@ public partial class ExcelTool
     /// <summary>
     /// 将表格数据转换为T类型的集合
     /// </summary>
-    public static async Task<IEnumerable<T>> ExcelToEntityAsync<T>(IExcelReader reader, ReadConfig<T> config = null)
+    public static async Task<IEnumerable<T>> ExcelToEntityAsync<T>(IExcelReader reader, ReadConfig<T>? config = null)
     {
         config ??= ReadConfig<T>.GenDefaultConfig();
         return await config.ToEntityAsync(reader);
@@ -79,7 +79,7 @@ public partial class ExcelTool
     /// <summary>
     /// 将表格数据转换为T类型的集合(更快)
     /// </summary>
-    public static IEnumerable<T> ExcelToEntity<T>(string path, ReadConfig<T> config = null)
+    public static IEnumerable<T> ExcelToEntity<T>(string path, ReadConfig<T>? config = null)
     {
         using var fs = path.OpenReadShareStream();
         return ExcelToEntity(fs, config);
@@ -87,7 +87,7 @@ public partial class ExcelTool
     /// <summary>
     /// 将表格数据转换为T类型的集合(更快)
     /// </summary>
-    public static IEnumerable<T> ExcelToEntity<T>(Stream stream, ReadConfig<T> config = null)
+    public static IEnumerable<T> ExcelToEntity<T>(Stream stream, ReadConfig<T>? config = null)
     {
         var reader = GetExcelReader(stream);
         return ExcelToEntity(reader, config);
@@ -95,7 +95,7 @@ public partial class ExcelTool
     /// <summary>
     /// 将表格数据转换为T类型的集合(更快)
     /// </summary>
-    public static IEnumerable<T> ExcelToEntity<T>(IExcelReader reader, ReadConfig<T> config = null)
+    public static IEnumerable<T> ExcelToEntity<T>(IExcelReader reader, ReadConfig<T>? config = null)
     {
         config ??= ReadConfig<T>.GenDefaultConfig();
         return config.ToEntity(reader);
@@ -120,7 +120,7 @@ public partial class ExcelTool
     /// <summary>
     /// 导出excel
     /// </summary>
-    public static async Task<Stream> ExportAsync<T>(string path, IEnumerable<T> data = null)
+    public static async Task<Stream> ExportAsync<T>(string path, IEnumerable<T>? data = null)
     {
         var config = ExportConfig<T>.GenDefaultConfig(data);
         return await config.ExportAsync(path, data);
@@ -128,7 +128,7 @@ public partial class ExcelTool
     /// <summary>
     /// 导出excel
     /// </summary>
-    public static async Task<Stream> ExportAsync<T>(Stream stream, IEnumerable<T> data = null)
+    public static async Task<Stream> ExportAsync<T>(Stream stream, IEnumerable<T>? data = null)
     {
         var config = ExportConfig<T>.GenDefaultConfig(data);
         return await config.ExportAsync(stream, data);
@@ -136,14 +136,14 @@ public partial class ExcelTool
     /// <summary>
     /// 导出excel
     /// </summary>
-    public static async Task<Stream> ExportAsync<T>(Stream stream, ExportConfig<T> config, IEnumerable<T> data = null)
+    public static async Task<Stream> ExportAsync<T>(Stream stream, ExportConfig<T> config, IEnumerable<T>? data = null)
     {
         return await config.ExportAsync(stream, data);
     }
     /// <summary>
     /// 导出excel
     /// </summary>
-    public static async Task<Stream> ExportAsync<T>(string path, ExportConfig<T> config, IEnumerable<T> data = null)
+    public static async Task<Stream> ExportAsync<T>(string path, ExportConfig<T> config, IEnumerable<T>? data = null)
     {
         return await config.ExportAsync(path, data);
     }

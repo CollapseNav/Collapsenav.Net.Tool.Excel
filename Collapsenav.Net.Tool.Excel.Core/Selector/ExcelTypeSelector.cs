@@ -4,8 +4,8 @@ namespace Collapsenav.Net.Tool.Excel;
 
 public class ExcelTypeSelector
 {
-    private static ConcurrentDictionary<string, Func<Stream, int>> StreamSelector = new();
-    private static ConcurrentDictionary<string, Func<object, bool>> ObjSelector = new();
+    private static readonly ConcurrentDictionary<string, Func<Stream, int>> StreamSelector = new();
+    private static readonly ConcurrentDictionary<string, Func<object, bool>> ObjSelector = new();
     public static void Add(ExcelType excelType, Func<Stream, int> func)
     {
         StreamSelector.AddOrUpdate(excelType.ToString(), func);
@@ -25,18 +25,18 @@ public class ExcelTypeSelector
         ObjSelector.AddOrUpdate(excelType, func);
     }
 
-    public static string GetExcelType(object obj, string excelType = null)
+    public static string GetExcelType(object obj, string excelType = "")
     {
         if (excelType.NotEmpty() && (ObjSelector?.ContainsKey(excelType) ?? false))
             return ObjSelector[excelType](obj) ? excelType : string.Empty;
-        return ObjSelector?.Where(item => item.Value(obj)).Select(item => item.Key).FirstOrDefault();
+        return ObjSelector!.Where(item => item.Value(obj)).Select(item => item.Key).FirstOrDefault() ?? string.Empty;
     }
 
-    public static string GetExcelType(Stream stream, string excelType = null)
+    public static string GetExcelType(Stream stream, string excelType = "")
     {
         if (excelType.NotEmpty() && (StreamSelector?.ContainsKey(excelType) ?? false))
             return excelType;
-        return StreamSelector?.Select(item => new { weight = item.Value(stream), value = item.Key }).OrderByDescending(item => item.weight).FirstOrDefault()?.value;
+        return StreamSelector!.Select(item => new { weight = item.Value(stream), value = item.Key }).OrderByDescending(item => item.weight).FirstOrDefault()?.value ?? string.Empty;
     }
 
 }

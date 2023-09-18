@@ -11,7 +11,7 @@
         <NoWarn>CA2255;1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../../Tool/Collapsenav.Net.Tool/Collapsenav.Net.Tool.csproj" />
+        <ProjectReference Include="../../Collapsenav.Net.Tool.Base/Collapsenav.Net.Tool/Collapsenav.Net.Tool.csproj" />
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.5.0" />
     </ItemGroup>

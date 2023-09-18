@@ -8,18 +8,18 @@ public class ReadCellOption<T> : BaseCellOption<T>
 {
     public ReadCellOption() { }
     public ReadCellOption(ICellOption cellOption) : base(cellOption) { }
-    public ReadCellOption(string excelField, string propName, Func<string, object> action = null) : base(excelField, propName)
+    public ReadCellOption(string excelField, string propName, Func<string, object?>? action = null) : base(excelField, propName)
     {
         Action = action;
     }
-    public ReadCellOption(string excelField, PropertyInfo prop, Func<string, object> action = null) : base(excelField, prop)
+    public ReadCellOption(string excelField, PropertyInfo prop, Func<string, object?>? action = null) : base(excelField, prop)
     {
         Action = action;
     }
     /// <summary>
     /// 转换 表格 数据的方法
     /// </summary>
-    public Func<string, object> Action
+    public Func<string, object?>? Action
     {
         get
         {
@@ -37,13 +37,13 @@ public class ReadCellOption<T> : BaseCellOption<T>
                 nameof(DateTime) => (item) => DateTime.Parse(item),
                 nameof(Guid) => (item) => Guid.Parse(item),
                 // 如果是非空类型, 则进行对应非空的转换
-                _ => (item) => Prop.PropertyType.Name.Contains(nameof(Nullable)) ? ParseNullableValueFunc(Prop.PropertyType, item) : item,
+                _ => (item) => Prop!.PropertyType.Name.Contains(nameof(Nullable)) ? ParseNullableValueFunc(Prop.PropertyType, item) : item,
             };
             return action;
         }
         set => action = value;
     }
-    private Func<string, object> action;
+    private Func<string, object?>? action;
 
     /// <summary>
     /// 可空类型

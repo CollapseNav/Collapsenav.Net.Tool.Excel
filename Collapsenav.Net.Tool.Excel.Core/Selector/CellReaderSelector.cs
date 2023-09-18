@@ -24,7 +24,7 @@ public class CellReaderSelector
     }
     public static IExcelCellReader GetCellReader(object obj)
     {
-        return GetCellReader(obj, null);
+        return GetCellReader(obj, string.Empty);
     }
     public static IExcelCellReader GetCellReader(object obj, string excelType)
     {
@@ -39,7 +39,7 @@ public class CellReaderSelector
     }
     public static IExcelCellReader GetCellReader(Stream stream)
     {
-        return GetCellReader(stream, null);
+        return GetCellReader(stream, string.Empty);
     }
     public static IExcelCellReader GetCellReader(Stream stream, string excelType)
     {
