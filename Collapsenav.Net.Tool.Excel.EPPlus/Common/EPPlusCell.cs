@@ -28,5 +28,9 @@ public class EPPlusCell : IReadCell<ExcelRangeBase>
             return;
         Value = tcell?.Cell?.Value;
     }
+    public override string ToString()
+    {
+        return StringValue;
+    }
 }
 

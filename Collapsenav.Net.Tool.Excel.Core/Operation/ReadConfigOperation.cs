@@ -1,5 +1,3 @@
-using System.Collections.Concurrent;
-
 namespace Collapsenav.Net.Tool.Excel;
 
 public partial class ReadConfig<T>
@@ -7,7 +5,7 @@ public partial class ReadConfig<T>
     /// <summary>
     /// 将表格数据转换为T类型的集合(更快)
     /// </summary>
-    public virtual IEnumerable<T> ToEntity(IExcelReader sheet)
+    public virtual IEnumerable<T> ToEntity<E>(IExcelReader<E> sheet)
     {
         var header = sheet.HeadersWithIndex;
         var rowCount = sheet.RowCount;
@@ -23,7 +21,7 @@ public partial class ReadConfig<T>
                     if (option.ExcelField.NotNull())
                     {
                         var value = dataRow[header[option.ExcelField]];
-                        option.Prop!.SetValue(obj, option.Action == null ? value : option.Action(value));
+                        option.Prop!.SetValue(obj, option.Action == null ? value : option.Action(value?.ToString() ?? string.Empty));
                     }
                     else
                         option.Prop!.SetValue(obj, option.Action == null ? null : option.Action(string.Empty));

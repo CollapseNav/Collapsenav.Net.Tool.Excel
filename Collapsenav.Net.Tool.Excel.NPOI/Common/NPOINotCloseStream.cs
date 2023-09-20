@@ -6,6 +6,9 @@ namespace Collapsenav.Net.Tool.Excel;
 /// <summary>
 /// 专门为NPOI做的不关闭流
 /// </summary>
+/// <remarks>
+/// 一般的npoi会自动关闭流，影响到后面的使用
+/// </remarks>
 public class NPOINotCloseStream : MemoryStream
 {
     public bool? IsXlsx { get; set; }

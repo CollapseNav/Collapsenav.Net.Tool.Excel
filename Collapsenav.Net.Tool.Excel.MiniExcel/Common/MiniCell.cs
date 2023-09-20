@@ -50,5 +50,9 @@ public class MiniCell : IReadCell<KeyValuePair<string, object>>
             return;
         Value = cell.Value;
     }
+    public override string ToString()
+    {
+        return StringValue;
+    }
 }
 

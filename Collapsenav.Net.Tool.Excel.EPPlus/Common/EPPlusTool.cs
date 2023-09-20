@@ -14,38 +14,48 @@ public partial class EPPlusTool
     }
     public static ExcelPackage EPPlusPackage(string path)
     {
+        if (!File.Exists(path))
+            throw new FileNotFoundException($"{path} not exist");
         using var fs = path.OpenReadShareStream();
-        return new(fs);
+        try
+        {
+            var pack = new ExcelPackage(fs);
+            return pack;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
     /// <summary>
     /// 获取 EPPlus中使用 的 Workbook
     /// </summary>
     public static ExcelWorkbook EPPlusWorkbook(string path)
     {
-        return EPPlusPackage(path)?.Workbook;
+        return EPPlusPackage(path).Workbook;
     }
     /// <summary>
     /// 获取 EPPlus中使用 的 Workbook
     /// </summary>
     public static ExcelWorkbook EPPlusWorkbook(Stream stream)
     {
-        return EPPlusPackage(stream)?.Workbook;
+        return EPPlusPackage(stream).Workbook;
     }
     /// <summary>
     /// 获取 EPPlus中使用 的 Sheets
     /// </summary>
     public static ExcelWorksheets EPPlusSheets(string path)
     {
-        var sheets = EPPlusWorkbook(path)?.Worksheets;
-        return sheets.Count > 0 ? sheets : null;
+        var sheets = EPPlusWorkbook(path).Worksheets;
+        return sheets;
     }
     /// <summary>
     /// 获取 EPPlus中使用 的 Sheets
     /// </summary>
     public static ExcelWorksheets EPPlusSheets(Stream stream)
     {
-        var sheets = EPPlusWorkbook(stream)?.Worksheets;
-        return sheets.Count > 0 ? sheets : null;
+        var sheets = EPPlusWorkbook(stream).Worksheets;
+        return sheets;
     }
     /// <summary>
     /// 获取 EPPlus中使用 的 Sheet
@@ -53,7 +63,7 @@ public partial class EPPlusTool
     public static ExcelWorksheet EPPlusSheet(string path, string? sheetname = null)
     {
         var sheets = EPPlusSheets(path);
-        return sheetname.IsNull() ? sheets?[ExcelTool.EPPlusZero] : sheets?[sheetname];
+        return sheetname.IsNull() ? sheets[ExcelTool.EPPlusZero] : sheets[sheetname];
     }
     /// <summary>
     /// 获取 EPPlus中使用 的 Sheet
@@ -61,7 +71,7 @@ public partial class EPPlusTool
     public static ExcelWorksheet EPPlusSheet(Stream stream, string? sheetname = null)
     {
         var sheets = EPPlusSheets(stream);
-        return sheetname.IsNull() ? sheets?[ExcelTool.EPPlusZero] : sheets?[sheetname];
+        return sheetname.IsNull() ? sheets[ExcelTool.EPPlusZero] : sheets[sheetname];
     }
     /// <summary>
     /// 获取 EPPlus中使用 的 Sheet
@@ -69,7 +79,7 @@ public partial class EPPlusTool
     public static ExcelWorksheet EPPlusSheet(string path, int sheetindex)
     {
         var sheets = EPPlusSheets(path);
-        return sheets?[sheetindex];
+        return sheets[sheetindex];
     }
     /// <summary>
     /// 获取 EPPlus中使用 的 Sheet
@@ -77,7 +87,7 @@ public partial class EPPlusTool
     public static ExcelWorksheet EPPlusSheet(Stream stream, int sheetindex)
     {
         var sheets = EPPlusSheets(stream);
-        return sheets?[sheetindex];
+        return sheets[sheetindex];
     }
     /// <summary>
     /// 将表格数据转换为T类型的集合
@@ -94,7 +104,7 @@ public partial class EPPlusTool
     public static IEnumerable<string> ExcelHeader(ExcelWorksheet sheet)
     {
         return sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns]
-                .Select(item => item.Value?.ToString().Trim()).ToList();
+                .Select(item => item.Value?.ToString()?.Trim() ?? string.Empty).ToList() ?? Enumerable.Empty<string>();
     }
     /// <summary>
     /// 获取表格header和对应的index
@@ -103,7 +113,7 @@ public partial class EPPlusTool
     {
         var headers = sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns]
         .Where(item => item.Value.ToString().NotNull())
-        .ToDictionary(item => item.Value?.ToString().Trim(), item => item.End.Column - ExcelTool.EPPlusZero);
+        .ToDictionary(item => item.Value.ToString()!.Trim(), item => item.End.Column - ExcelTool.EPPlusZero);
         return headers;
     }
 }

@@ -1,6 +1,6 @@
 namespace Collapsenav.Net.Tool.Excel;
 
-public interface IExcelCellReader : IExcelContainer<IReadCell>, IExcelHeader
+public interface IExcelCellReader : IExcelReader<IReadCell>
 {
     Stream? ExcelStream { get; }
     /// <summary>

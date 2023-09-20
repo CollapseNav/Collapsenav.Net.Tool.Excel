@@ -8,4 +8,11 @@ public static class ExcelExt
     {
         return ExcelTool.IsXls(filepath);
     }
+    /// <summary>
+    /// 是否 xlsx 文件
+    /// </summary>
+    public static bool IsXlsx(this string filepath)
+    {
+        return ExcelTool.IsXlsx(filepath);
+    }
 }

@@ -1,7 +1,5 @@
 using System.Data;
-
 namespace Collapsenav.Net.Tool.Excel;
-
 public partial class ExcelTool
 {
     public const int EPPlusZero = 1;
@@ -13,14 +11,40 @@ public partial class ExcelTool
     /// </summary>
     public static bool IsXls(string filepath)
     {
+        var bytes = new byte[4];
+        var xlsHead = new byte[] { 0xD0, 0xCF, 0x11, 0xE0 };
         if (filepath.IsEmpty())
             throw new NoNullAllowedException("文件路径不能为空");
-        var ext = Path.GetExtension(filepath).ToLower();
-        if (!ext.HasContain(".xlsx", ".xls"))
-            throw new Exception("文件必须为excel格式");
         if (!File.Exists(filepath))
-            throw new FileNotFoundException($@"我找不到这个叫 {filepath} 的文件,你看看是不是路径写错了");
-        return ext == ".xls";
+            throw new FileNotFoundException($@"我找不到这个叫 {filepath} 的文件");
+        using var fs = filepath.OpenReadShareStream();
+#if NETSTANDARD2_0
+        fs.Read(bytes, 0, (int)bytes.Length);
+#else
+        fs.Read(bytes);
+#endif
+        fs.Close();
+        return bytes.SequenceEqual(xlsHead);
+    }
+    /// <summary>
+    /// 是否 xlsx 文件
+    /// </summary>
+    public static bool IsXlsx(string filepath)
+    {
+        var bytes = new byte[4];
+        var xlsxHead = new byte[] { 0x50, 0x4B, 0x03, 0x04 };
+        if (filepath.IsEmpty())
+            throw new NoNullAllowedException("文件路径不能为空");
+        if (!File.Exists(filepath))
+            throw new FileNotFoundException($@"我找不到这个叫 {filepath} 的文件");
+        using var fs = filepath.OpenReadShareStream();
+#if NETSTANDARD2_0
+        fs.Read(bytes, 0, (int)bytes.Length);
+#else
+        fs.Read(bytes);
+#endif
+        fs.Close();
+        return bytes.SequenceEqual(xlsxHead);
     }
 
     public static IExcelCellReader GetCellReader(string path, ExcelType? excelType = null)
