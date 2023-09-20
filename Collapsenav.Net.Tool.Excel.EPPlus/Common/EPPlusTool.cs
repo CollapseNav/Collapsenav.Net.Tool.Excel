@@ -112,8 +112,7 @@ public partial class EPPlusTool
     public static IDictionary<string, int> HeadersWithIndex(ExcelWorksheet sheet)
     {
         var headers = sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns]
-        .Where(item => item.Value.ToString().NotNull())
-        .ToDictionary(item => item.Value.ToString()!.Trim(), item => item.End.Column - ExcelTool.EPPlusZero);
+        .ToDictionary(item => item.Value?.ToString()?.Trim() ?? DateTime.Now.ToTimestamp().ToString(), item => item.End.Column - ExcelTool.EPPlusZero);
         return headers;
     }
 }

@@ -49,7 +49,7 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     {
         if (config != null)
         {
-            FieldOption = config.FieldOption.Select(item => new ReadCellOption<T>(item));
+            FieldOption = config.FieldOption.Select(item => new ReadCellOption<T>(item)).ToList();
             Data = config.Data;
         }
     }

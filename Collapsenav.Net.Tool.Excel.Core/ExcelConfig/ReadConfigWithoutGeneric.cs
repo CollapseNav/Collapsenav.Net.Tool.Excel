@@ -184,14 +184,14 @@ public class ReadConfig : ReadConfig<object>
     public static ReadConfig GenConfigBySummary(string typeName)
     {
         var config = new ReadConfig(typeName);
-        config.FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(config.DtoType).FieldOption.Select(item => new ReadCellOption<object>(item));
+        config.FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(config.DtoType).FieldOption.Select(item => new ReadCellOption<object>(item)).ToList();
         return config;
     }
     public static ReadConfig GenConfigBySummary(Type type)
     {
         var config = new ReadConfig(type)
         {
-            FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(type).FieldOption.Select(item => new ReadCellOption<object>(item))
+            FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(type).FieldOption.Select(item => new ReadCellOption<object>(item)).ToList()
         };
         return config;
     }

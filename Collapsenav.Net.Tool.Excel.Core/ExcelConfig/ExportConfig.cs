@@ -19,7 +19,7 @@ public partial class ExportConfig<T> : ExcelConfig<T, ExportCellOption<T>>
     {
         if (config != null)
         {
-            FieldOption = config.FieldOption.Select(item => new ExportCellOption<T>(item));
+            FieldOption = config.FieldOption.Select(item => new ExportCellOption<T>(item)).ToList();
             Data = config.Data;
         }
     }

@@ -43,7 +43,7 @@ public class MiniExcelReader : IExcelReader
         sheet = sheetList;
 
         rowCount = sheet.Count();
-        var sheetFirst = sheet.First() as IEnumerable<KeyValuePair<string, object>>;
+        var sheetFirst = (sheet.FirstOrDefault() as IEnumerable<KeyValuePair<string, object>>) ?? Enumerable.Empty<KeyValuePair<string, object>>();
         HeaderList = sheetFirst.Select(item => item.Value?.ToString() ?? string.Empty);
         HeaderIndex = sheetFirst.Select((item, index) => (item.Value, index)).ToDictionary(item => item.Value?.ToString() ?? item.index.ToString(), item => item.index);
     }

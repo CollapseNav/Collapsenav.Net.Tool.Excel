@@ -23,7 +23,7 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
         {
             ExcelField = item.FieldName,
             PropName = item.PropName,
-        }) ?? Enumerable.Empty<CellOption>();
+        })?.ToList() ?? Enumerable.Empty<CellOption>();
     }
     public Type DtoType { get; protected set; }
     public virtual IEnumerable<CellOption> FieldOption { get; set; }

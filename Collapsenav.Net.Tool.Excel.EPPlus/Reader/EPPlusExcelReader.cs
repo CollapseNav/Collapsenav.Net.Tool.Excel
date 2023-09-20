@@ -32,10 +32,10 @@ public class EPPlusExcelReader : IExcelReader
     {
         this.sheet = sheet;
 
-        rowCount = sheet.Dimension.Rows;
+        rowCount = sheet.Dimension?.Rows ?? Zero;
         HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
         HeaderList = HeaderIndex.Select(item => item.Key).ToList();
-        sheetData = sheet.Cells.Value as object[,];
+        sheetData = (sheet.Cells.Value as object[,]) ?? new object[0, 0];
     }
     public IEnumerable<string> this[string field]
     {

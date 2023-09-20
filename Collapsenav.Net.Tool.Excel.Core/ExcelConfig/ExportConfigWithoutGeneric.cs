@@ -78,7 +78,7 @@ public class ExportConfig : ExportConfig<object>
             throw new NullReferenceException("data 不能为空");
         var config = new ExportConfig(data)
         {
-            FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(data.First().GetType()).FieldOption.Select(option => new ExportCellOption<object>(option))
+            FieldOption = ExcelConfig<object, BaseCellOption<object>>.GenConfigBySummary(data.First().GetType()).FieldOption.Select(option => new ExportCellOption<object>(option)).ToList()
         };
         return config;
     }
@@ -88,7 +88,7 @@ public class ExportConfig : ExportConfig<object>
         var exportConfig = new ExportConfig();
         if (config != null)
         {
-            exportConfig.FieldOption = config.FieldOption.Select(item => new ExportCellOption<object>(item.ExcelField, item.Prop, (data) => item.Action((T)data)));
+            exportConfig.FieldOption = config.FieldOption.Select(item => new ExportCellOption<object>(item.ExcelField, item.Prop, (data) => item.Action((T)data))).ToList();
             exportConfig.Data = config.Data;
         }
         // var exportOptions = exportConfig.FieldOption;
