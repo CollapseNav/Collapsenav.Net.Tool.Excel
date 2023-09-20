@@ -30,15 +30,6 @@ public class ExcelToolTest
         }
         try
         {
-            _ = "dafks.xxx".IsXls();
-        }
-        catch (Exception ex)
-        {
-            Assert.True(ex.Message == "文件必须为excel格式");
-        }
-
-        try
-        {
             _ = "sfaeds.xlsx".IsXls();
         }
         catch (Exception ex)

@@ -6,7 +6,10 @@ public class ExcelAttribute : Attribute
     /// 表头项
     /// </summary>
     readonly string excelField;
-    public ExcelAttribute() { }
+    public ExcelAttribute()
+    {
+        excelField = string.Empty;
+    }
     public ExcelAttribute(string excelField) : this()
     {
         this.excelField = excelField;

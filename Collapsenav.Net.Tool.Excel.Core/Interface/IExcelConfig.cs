@@ -23,10 +23,15 @@ public interface IExcelConfig<out T, CellOption> : IExcelConfig where CellOption
     /// <summary>
     /// 添加普通单元格设置
     /// </summary>
+    /// <param name="field">列名</param>
+    /// <param name="prop">对应需要赋值的属性</param>
     IExcelConfig<T, CellOption> Add(string field, PropertyInfo prop);
     /// <summary>
     /// 添加普通单元格设置
     /// </summary>
+    /// <param name="check">判断是否需要添加</param>
+    /// <param name="field">列名</param>
+    /// <param name="prop">对应需要赋值的属性</param>
     IExcelConfig<T, CellOption> AddIf(bool check, string field, PropertyInfo prop);
     /// <summary>
     /// 添加普通单元格设置
@@ -44,10 +49,14 @@ public interface IExcelConfig<out T, CellOption> : IExcelConfig where CellOption
     /// <summary>
     /// 添加普通单元格设置
     /// </summary>
+    /// <param name="option">其他的单元格配置</param>
     IExcelConfig<T, CellOption> Add(CellOption option);
     /// <summary>
-    /// check条件为True时添加普通单元格设置
+    /// 添加普通单元格设置
     /// </summary>
+    /// <param name="check">判断结果</param>
+    /// <param name="option">其他的单元格配置</param>
+    /// <returns></returns>
     IExcelConfig<T, CellOption> AddIf(bool check, CellOption option);
     /// <summary>
     /// 移除指定单元格配置

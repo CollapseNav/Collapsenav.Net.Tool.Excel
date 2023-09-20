@@ -45,16 +45,18 @@ public class ReadConfig : ReadConfig<object>
     /// 如果有大于一个匹配项, 则尝试使用全名匹配
     /// </remarks>
     /// <returns></returns>
-    private static Type? GetMatchType(string typeName)
+    private static Type GetMatchType(string typeName)
     {
         var hasDot = typeName.Contains('.');
         var types = AppDomain.CurrentDomain.GetCustomerTypes();
-        var matchTypes = types.Where(item => item.FullName.Contains(typeName)).ToArray();
+        var matchTypes = types.Where(item => item.FullName.NotEmpty() && item.FullName!.Contains(typeName)).ToArray();
         Type? matchType = null;
         if (matchTypes?.Length == 1)
             matchType = matchTypes.First();
         else if (matchTypes?.Length > 1)
             matchType = matchTypes.FirstOrDefault(item => item.FullName == typeName);
+        if (matchType == null)
+            throw new Exception("未找到匹配的类型");
         return matchType;
     }
     /// <summary>

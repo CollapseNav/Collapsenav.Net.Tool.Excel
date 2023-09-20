@@ -5,7 +5,13 @@ namespace Collapsenav.Net.Tool.Excel;
 /// </summary>
 public interface IReadCell
 {
+    /// <summary>
+    /// 行数
+    /// </summary>
     int Row { get; }
+    /// <summary>
+    /// 列数
+    /// </summary>
     int Col { get; }
     /// <summary>
     /// 纯字符串格式的value

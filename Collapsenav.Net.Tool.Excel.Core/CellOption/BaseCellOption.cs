@@ -48,7 +48,7 @@ public class BaseCellOption<T> : ICellOption
     /// <summary>
     /// 对应字段的属性(实际上包含PropName)
     /// </summary>
-    public virtual PropertyInfo Prop
+    public virtual PropertyInfo? Prop
     {
         get => prop;
         set
@@ -62,7 +62,7 @@ public class BaseCellOption<T> : ICellOption
             }
         }
     }
-    protected PropertyInfo prop;
+    protected PropertyInfo? prop;
     /// <summary>
     /// 就是一个看起来比较方便的标识
     /// </summary>

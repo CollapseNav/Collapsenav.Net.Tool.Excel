@@ -25,15 +25,17 @@ public class ExcelTypeSelector
         ObjSelector.AddOrUpdate(excelType, func);
     }
 
-    public static string GetExcelType(object obj, string excelType = "")
+    public static string GetExcelType(object obj, string? excelType = "")
     {
+        excelType ??= string.Empty;
         if (excelType.NotEmpty() && (ObjSelector?.ContainsKey(excelType) ?? false))
             return ObjSelector[excelType](obj) ? excelType : string.Empty;
         return ObjSelector!.Where(item => item.Value(obj)).Select(item => item.Key).FirstOrDefault() ?? string.Empty;
     }
 
-    public static string GetExcelType(Stream stream, string excelType = "")
+    public static string GetExcelType(Stream stream, string? excelType = "")
     {
+        excelType ??= string.Empty;
         if (excelType.NotEmpty() && (StreamSelector?.ContainsKey(excelType) ?? false))
             return excelType;
         return StreamSelector!.Select(item => new { weight = item.Value(stream), value = item.Key }).OrderByDescending(item => item.weight).FirstOrDefault()?.value ?? string.Empty;

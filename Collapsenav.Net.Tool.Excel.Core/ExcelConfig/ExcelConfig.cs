@@ -16,14 +16,18 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     {
         InitFieldOption(kvs);
     }
-
     public ExcelConfig(IEnumerable<StringCellOption>? options) : this()
     {
-        FieldOption = options?.Select(item => new CellOption
+        if (options == null || options.IsEmpty())
+            FieldOption = Enumerable.Empty<CellOption>();
+        else
         {
-            ExcelField = item.FieldName,
-            PropName = item.PropName,
-        })?.ToList() ?? Enumerable.Empty<CellOption>();
+            FieldOption = options.Select(item => new CellOption
+            {
+                ExcelField = item.FieldName,
+                PropName = item.PropName,
+            }).ToList();
+        }
     }
     public Type DtoType { get; protected set; }
     public virtual IEnumerable<CellOption> FieldOption { get; set; }
@@ -40,7 +44,6 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     }
     private IEnumerable<T>? data;
     public virtual IEnumerable<string> Headers { get => FieldOption.Select(item => item.ExcelField ?? string.Empty); }
-
     protected IDictionary<string, int>? headerIndex;
     public virtual IDictionary<string, int> HeadersWithIndex
     {
@@ -51,7 +54,6 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
         }
         protected set => headerIndex = value;
     }
-
     /// <summary>
     /// 通过元组初始化配置
     /// </summary>
@@ -70,7 +72,7 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     /// </summary>
     public void FilterOptionByHeaders(IEnumerable<string>? headers)
     {
-        FieldOption = FilterOptionByHeaders(FieldOption, headers);
+        FieldOption = FilterOptionByHeaders(FieldOption, headers).ToList();
     }
     /// <summary>
     /// 根据给出的表头筛选options
@@ -110,7 +112,7 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     }
     public virtual IExcelConfig<T, CellOption> Remove(string field)
     {
-        FieldOption = FieldOption.Where(item => item.ExcelField != field);
+        FieldOption = FieldOption.Where(item => item.ExcelField != field).ToList();
         return this;
     }
 

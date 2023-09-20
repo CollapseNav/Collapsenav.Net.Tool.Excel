@@ -28,7 +28,7 @@ public class ExcelReaderSelector
     {
         return GetExcelReader(obj, string.Empty);
     }
-    public static IExcelReader GetExcelReader(object obj, string excelType)
+    public static IExcelReader GetExcelReader(object obj, string? excelType)
     {
         if (ObjSelectorDict.IsEmpty())
             throw new NoRegisterExcelReaderException();
@@ -39,7 +39,7 @@ public class ExcelReaderSelector
             throw new NoRegisterExcelReaderException();
         return ObjSelectorDict[excelType](obj);
     }
-    public static IExcelReader GetExcelReader(Stream stream, string excelType)
+    public static IExcelReader GetExcelReader(Stream stream, string? excelType)
     {
         if (StreamSelectorDict.IsEmpty())
             throw new NoRegisterExcelReaderException();

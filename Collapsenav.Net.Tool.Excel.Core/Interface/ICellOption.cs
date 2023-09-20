@@ -15,7 +15,7 @@ public interface ICellOption
     /// <summary>
     /// 属性
     /// </summary>
-    PropertyInfo Prop { get; set; }
+    PropertyInfo? Prop { get; set; }
     /// <summary>
     /// 属性名称
     /// </summary>

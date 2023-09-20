@@ -37,12 +37,16 @@ public class MiniCell : IReadCell<KeyValuePair<string, object>>
     public KeyValuePair<string, object> Cell { get => cell; set => cell = value; }
     public int Row { get => _row - ExcelTool.MiniZero; }
     public int Col { get => _col - ExcelTool.MiniZero; }
-    public string StringValue => cell.Value?.ToString().Trim();
-    public Type ValueType => cell.Value?.GetType();
-    public object Value
+    public string StringValue => cell.Value?.ToString()?.Trim() ?? string.Empty;
+    public Type? ValueType => cell.Value?.GetType();
+    public object? Value
     {
         get => cell.Value;
-        set => MRow.ExcelRow[_scol] = value;
+        set
+        {
+            if (value != null)
+                MRow.ExcelRow[_scol] = value;
+        }
     }
     public void CopyCellFrom(IReadCell cell)
     {
