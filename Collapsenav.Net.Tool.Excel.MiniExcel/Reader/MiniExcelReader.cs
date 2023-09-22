@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using MiniExcelLibs;
 
 namespace Collapsenav.Net.Tool.Excel;
@@ -17,17 +16,27 @@ public class MiniExcelReader : IExcelReader
     {
         SheetReader = sheetReader;
     }
+    /// <summary>
+    /// 读取之后会复制一份, 并且关闭原来的文件流, 解除文件占用
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
     public MiniExcelReader(string path) : this(path.OpenReadWriteShareStream())
     {
         // 通过文件读取的时候需要将原来的文件释放
         toDispose.Dispose();
     }
 
+    /// <summary>
+    /// 会复制传入的文件流, 不会关闭传入的流
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="sheetName"></param>
     public MiniExcelReader(Stream stream, string? sheetName = null)
     {
         SheetStream = new MemoryStream();
         stream.SeekAndCopyTo(SheetStream);
-
+        // 记录传入的流，该构造函数不会关闭原来的流
         toDispose = stream;
 
         if (sheetName.NotEmpty())

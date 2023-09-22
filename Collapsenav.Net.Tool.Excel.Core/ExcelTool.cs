@@ -11,19 +11,22 @@ public partial class ExcelTool
     /// </summary>
     public static bool IsXls(string filepath)
     {
-        var bytes = new byte[4];
-        var xlsHead = new byte[] { 0xD0, 0xCF, 0x11, 0xE0 };
         if (filepath.IsEmpty())
             throw new NoNullAllowedException("文件路径不能为空");
         if (!File.Exists(filepath))
             throw new FileNotFoundException($@"我找不到这个叫 {filepath} 的文件");
         using var fs = filepath.OpenReadShareStream();
+        return IsXls(fs);
+    }
+    public static bool IsXls(Stream stream)
+    {
+        var bytes = new byte[4];
+        var xlsHead = new byte[] { 0xD0, 0xCF, 0x11, 0xE0 };
 #if NETSTANDARD2_0
-        fs.Read(bytes, 0, (int)bytes.Length);
+        stream.Read(bytes, 0, (int)bytes.Length);
 #else
-        fs.Read(bytes);
+        stream.Read(bytes);
 #endif
-        fs.Close();
         return bytes.SequenceEqual(xlsHead);
     }
     /// <summary>
@@ -31,22 +34,24 @@ public partial class ExcelTool
     /// </summary>
     public static bool IsXlsx(string filepath)
     {
-        var bytes = new byte[4];
-        var xlsxHead = new byte[] { 0x50, 0x4B, 0x03, 0x04 };
         if (filepath.IsEmpty())
             throw new NoNullAllowedException("文件路径不能为空");
         if (!File.Exists(filepath))
             throw new FileNotFoundException($@"我找不到这个叫 {filepath} 的文件");
         using var fs = filepath.OpenReadShareStream();
+        return IsXlsx(fs);
+    }
+    public static bool IsXlsx(Stream stream)
+    {
+        var bytes = new byte[4];
+        var xlsxHead = new byte[] { 0x50, 0x4B, 0x03, 0x04 };
 #if NETSTANDARD2_0
-        fs.Read(bytes, 0, (int)bytes.Length);
+        stream.Read(bytes, 0, (int)bytes.Length);
 #else
-        fs.Read(bytes);
+        stream.Read(bytes);
 #endif
-        fs.Close();
         return bytes.SequenceEqual(xlsxHead);
     }
-
     public static IExcelCellReader GetCellReader(string path, ExcelType? excelType = null)
     {
         using var fs = path.OpenReadShareStream();

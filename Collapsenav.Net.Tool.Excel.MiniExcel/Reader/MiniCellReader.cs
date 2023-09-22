@@ -1,10 +1,13 @@
 using System.Collections;
-using System.Dynamic;
 using MiniExcelLibs;
 namespace Collapsenav.Net.Tool.Excel;
 /// <summary>
 /// 使用MiniExcel获取excel的单元格
 /// </summary>
+/// <remarks>
+/// 由于提供了将修改应用到传入的流或者文件中的功能<br/>
+/// 所以会长期保持文件为打开的状态
+/// </remarks>
 public class MiniCellReader : IExcelCellReader
 {
     public int Zero => ExcelTool.MiniZero;
@@ -13,67 +16,41 @@ public class MiniCellReader : IExcelCellReader
     public Stream? ExcelStream { get; protected set; }
     protected int rowCount;
     protected int colCount;
-    protected ISheetCellReader SheetReader;
-    public MiniCellReader(ISheetCellReader sheetReader, string? sheetName = null)
+    protected ISheetCellReader? SheetReader;
+    public MiniCellReader(ISheetCellReader sheetReader, string? sheetName = null) : this(sheetReader.SheetStream, sheetName)
     {
         SheetReader = sheetReader;
-        if (sheetName.NotEmpty())
+    }
+    public MiniCellReader(string path) : this(path.OpenCreateReadWriteShareStream()) { }
+    public MiniCellReader(Stream? stream = null, string? sheetName = null)
+    {
+        _rows = new List<MiniRow>(1000);
+        // 如果是一个非空的文件流
+        if (stream != null)
         {
-            ExcelStream = SheetReader.SheetStream;
-            Init(sheetName);
+            ExcelStream = stream;
+
+            // 初始化 _sheet
+            IEnumerable<IDictionary<string, object>>? temp;
+            if (sheetName.NotEmpty())
+                temp = ExcelStream.Query(sheetName: sheetName) as IEnumerable<IDictionary<string, object>>;
+            else
+                temp = ExcelStream.Query() as IEnumerable<IDictionary<string, object>>;
+            _sheet = temp?.ToList() ?? new List<IDictionary<string, object>>();
+
+            foreach (var (data, index) in _sheet.SelectWithIndex())
+                _rows.Add(new MiniRow(data, index));
+
+            rowCount = _sheet.Count;
+            colCount = _sheet.First().Count;
         }
         else
         {
-            Init();
+            ExcelStream = new MemoryStream();
+            _sheet = new List<IDictionary<string, object>>(1000);
+            rowCount = 0;
         }
     }
-    public MiniCellReader()
-    {
-        Init();
-    }
-    public MiniCellReader(string path)
-    {
-        var fs = path.OpenCreateReadWriteShareStream();
-        Init(fs);
-    }
-    public MiniCellReader(Stream stream)
-    {
-        Init(stream);
-    }
-    private void Init(string sheetName)
-    {
-        Init(ExcelStream.Query(sheetName: sheetName));
-    }
-    private void Init(IEnumerable<dynamic> sheetList)
-    {
-        _sheet = (sheetList as IEnumerable<IDictionary<string, object>>).ToList();
-        _rows = new List<MiniRow>(2000);
-        foreach (var (data, index) in _sheet.SelectWithIndex())
-            _rows.Add(new MiniRow(data, index));
-        rowCount = _sheet.Count;
-        colCount = _sheet.First().Count;
-    }
-    private void Init(Stream stream)
-    {
-        try
-        {
-            ExcelStream = stream;
-            Init(ExcelStream.Query());
-        }
-        catch
-        {
-            Init();
-            ExcelStream = stream;
-        }
-    }
-    private void Init()
-    {
-        ExcelStream = new MemoryStream();
-        _sheet = new List<IDictionary<string, object>>(1000);
-        _rows = new List<MiniRow>(1000);
-        rowCount = 0;
-    }
-
 
     public int RowCount { get => rowCount; }
     public IEnumerable<string> Headers
@@ -150,7 +127,7 @@ public class MiniCellReader : IExcelCellReader
 
     public void Dispose()
     {
-        ExcelStream.Dispose();
+        ExcelStream?.Dispose();
     }
 
     public void Save(bool autofit = true)
@@ -161,8 +138,10 @@ public class MiniCellReader : IExcelCellReader
     /// <summary>
     /// 保存到流
     /// </summary>
-    public void SaveTo(Stream stream, bool autofit = true)
+    public void SaveTo(Stream? stream, bool autofit = true)
     {
+        if (stream == null)
+            throw new NullReferenceException();
         stream.SeekToOrigin();
         stream.Clear();
         stream.SaveAs(_sheet, printHeader: false);

@@ -25,25 +25,8 @@ public class MiniSheetCellReader : ISheetCellReader
         }
     }
 
-    public IExcelCellReader this[int index]
-    {
-        get
-        {
-            if (index >= Readers.Count())
-                return null;
-            return Readers.ElementAt(index);
-        }
-    }
+    public IExcelCellReader this[int index] => Readers.ElementAt(index);
     public MiniSheetCellReader(Stream stream)
-    {
-        Init(stream);
-    }
-    public MiniSheetCellReader(string path)
-    {
-        var fs = path.OpenCreateReadWriteShareStream();
-        Init(fs);
-    }
-    private void Init(Stream stream)
     {
         SheetStream = stream;
         List<string> sheetNames = new();
@@ -60,8 +43,14 @@ public class MiniSheetCellReader : ISheetCellReader
             sheetNames.ToDictionary(item => item, item => new MiniCellReader(this, item)).ForEach(item => Sheets.Add(item.Key, item.Value));
             Readers = Sheets.Select(item => item.Value).ToList();
         }
+        else
+        {
+            Readers = Enumerable.Empty<IExcelCellReader>();
+        }
     }
-
+    public MiniSheetCellReader(string path) : this(path.OpenCreateReadShareStream())
+    {
+    }
     public void Save(bool autofit = true)
     {
         SaveTo(SheetStream, autofit);
@@ -70,7 +59,7 @@ public class MiniSheetCellReader : ISheetCellReader
     public void SaveTo(Stream stream, bool autofit = true)
     {
         stream.Clear();
-        MiniExcel.SaveAs(stream, Sheets.ToDictionary(item => item.Key, item => (item.Value as MiniCellReader)._sheet as object), printHeader: false, configuration: new OpenXmlConfiguration
+        MiniExcel.SaveAs(stream, Sheets.ToDictionary(item => item.Key, item => (item.Value as MiniCellReader)?._sheet as object), printHeader: false, configuration: new OpenXmlConfiguration
         {
             AutoFilter = false,
             TableStyles = TableStyles.None,
