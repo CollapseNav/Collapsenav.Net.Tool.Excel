@@ -42,8 +42,9 @@ public class NPOICell : IReadCell<ICell>
             return;
         Value = tcell.StringValue;
         var style = Cell?.Sheet.Workbook.CreateCellStyle();
-        style?.CloneStyleFrom(tcell.Cell.CellStyle);
-        Cell.CellStyle = style;
+        style?.CloneStyleFrom(tcell.Cell?.CellStyle);
+        if (Cell != null)
+            Cell.CellStyle = style;
     }
     public override string ToString()
     {

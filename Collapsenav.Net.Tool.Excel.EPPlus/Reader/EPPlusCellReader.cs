@@ -13,69 +13,39 @@ public class EPPlusCellReader : IExcelCellReader
     protected IDictionary<string, int> HeaderIndex;
     protected IEnumerable<string> HeaderList;
     protected int rowCount;
-    protected ISheetCellReader SheetReader;
-    public EPPlusCellReader(ISheetCellReader sheetReader, string? sheetName = null)
+    protected ISheetCellReader? SheetReader;
+    public EPPlusCellReader(ISheetCellReader sheetReader, string? sheetName = null) : this(sheetReader.SheetStream, sheetName)
     {
         SheetReader = sheetReader;
-        if (sheetName.NotEmpty())
-        {
-            ExcelStream = SheetReader.SheetStream;
-            Init(sheetName);
-        }
-        else
-        {
-            Init();
-        }
     }
     public EPPlusCellReader()
     {
-        Init();
+        _pack = new ExcelPackage();
+        _sheet = _pack.Workbook.Worksheets.Add("sheet1");
+        HeaderList = Enumerable.Empty<string>();
+        HeaderIndex = new Dictionary<string, int>();
+        rowCount = 0;
     }
-    public EPPlusCellReader(string path)
+    public EPPlusCellReader(string path) : this(path.OpenCreateReadWriteShareStream())
     {
-        var fs = path.OpenCreateReadWriteShareStream();
-        Init(fs);
     }
-    public EPPlusCellReader(Stream stream)
+    public EPPlusCellReader(Stream stream, string? sheetName = null) : this(EPPlusTool.EPPlusSheet(stream, sheetName))
     {
-        Init(stream);
+        ExcelStream = stream;
     }
     public EPPlusCellReader(ExcelWorksheet sheet)
-    {
-        Init(sheet);
-    }
-    private void Init(string sheetName)
-    {
-        Init(EPPlusTool.EPPlusSheet(ExcelStream, sheetName));
-    }
-    private void Init(Stream stream)
-    {
-        stream.SeekToOrigin();
-        // 使用传入的流, 可在 Save 时修改/覆盖
-        ExcelStream = stream;
-        var sheets = EPPlusTool.EPPlusSheets(ExcelStream);
-        // 若传入的文件中无法解析出 sheets ,则使用默认的无参初始化
-        if (sheets?.Count > 0)
-            Init(EPPlusTool.EPPlusSheet(ExcelStream));
-        else
-            Init();
-    }
-    private void Init(ExcelWorksheet sheet)
     {
         _sheet = sheet;
         _pack ??= new ExcelPackage();
         if (_pack.Workbook.Worksheets.Count == 0)
             _sheet = _pack.Workbook.Worksheets.Add("sheet1", sheet);
 
-        rowCount = sheet.Dimension.Rows;
-        HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
-        HeaderList = HeaderIndex.Select(item => item.Key).ToList();
-    }
-    private void Init()
-    {
-        _pack = new ExcelPackage();
-        _sheet = _pack.Workbook.Worksheets.Add("sheet1");
-        rowCount = 0;
+        if (sheet.Dimension != null)
+        {
+            rowCount = sheet.Dimension?.Rows ?? 0;
+            HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
+            HeaderList = HeaderIndex.Select(item => item.Key).ToList();
+        }
     }
     public int RowCount { get => rowCount; }
     public IEnumerable<string> Headers { get => HeaderList; }
@@ -88,7 +58,7 @@ public class EPPlusCellReader : IExcelCellReader
                 yield return new EPPlusCell(_sheet.Cells[i, HeaderIndex[field] + Zero]);
         }
     }
-    public IEnumerable<IReadCell> this[int row] => _sheet.Cells[row + Zero, Zero, row + Zero, Zero + Headers.Count()]?.Select(item => new EPPlusCell(item));
+    public IEnumerable<IReadCell> this[int row] => _sheet.Cells[row + Zero, Zero, row + Zero, Zero + Headers.Count()].Select(item => new EPPlusCell(item));
     public IReadCell this[int row, int col] => new EPPlusCell(_sheet.Cells[row + Zero, col + Zero]);
     public IReadCell this[string field, int row] => new EPPlusCell(_sheet.Cells[row + Zero, HeaderIndex[field] + Zero]);
     public void Dispose()
@@ -104,6 +74,8 @@ public class EPPlusCellReader : IExcelCellReader
     }
     public void Save(bool autofit = true)
     {
+        if (ExcelStream == null)
+            throw new NullReferenceException();
         SaveTo(ExcelStream, autofit);
     }
     /// <summary>

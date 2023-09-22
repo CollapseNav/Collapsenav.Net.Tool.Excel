@@ -9,12 +9,14 @@ public partial class ExcelTool
     /// <summary>
     /// 是否 xls 文件
     /// </summary>
-    public static bool IsXls(string filepath)
+    public static bool IsXls(string filepath, bool byName = true)
     {
         if (filepath.IsEmpty())
             throw new NoNullAllowedException("文件路径不能为空");
         if (!File.Exists(filepath))
             throw new FileNotFoundException($@"我找不到这个叫 {filepath} 的文件");
+        if (byName)
+            return filepath.EndsWith("xls");
         using var fs = filepath.OpenReadShareStream();
         return IsXls(fs);
     }
@@ -27,17 +29,20 @@ public partial class ExcelTool
 #else
         stream.Read(bytes);
 #endif
+        stream.SeekToOrigin();
         return bytes.SequenceEqual(xlsHead);
     }
     /// <summary>
     /// 是否 xlsx 文件
     /// </summary>
-    public static bool IsXlsx(string filepath)
+    public static bool IsXlsx(string filepath, bool byName = true)
     {
         if (filepath.IsEmpty())
             throw new NoNullAllowedException("文件路径不能为空");
         if (!File.Exists(filepath))
             throw new FileNotFoundException($@"我找不到这个叫 {filepath} 的文件");
+        if (byName)
+            return filepath.EndsWith("xlsx");
         using var fs = filepath.OpenReadShareStream();
         return IsXlsx(fs);
     }
@@ -50,6 +55,7 @@ public partial class ExcelTool
 #else
         stream.Read(bytes);
 #endif
+        stream.SeekToOrigin();
         return bytes.SequenceEqual(xlsxHead);
     }
     public static IExcelCellReader GetCellReader(string path, ExcelType? excelType = null)

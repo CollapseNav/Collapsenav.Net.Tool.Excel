@@ -15,9 +15,14 @@ public class NPOINotCloseStream : MemoryStream
     public NPOINotCloseStream() { }
     public NPOINotCloseStream(Stream stream)
     {
-        stream.CopyTo(this);
+        stream.SeekAndCopyTo(this);
         stream.SeekToOrigin();
         this.SeekToOrigin();
+        if (stream is FileStream fs)
+        {
+            if (fs.Name.IsXlsx())
+                IsXlsx = true;
+        }
     }
     public NPOINotCloseStream(string path)
     {
@@ -25,7 +30,7 @@ public class NPOINotCloseStream : MemoryStream
         fs.CopyTo(this);
         fs.Dispose();
         this.SeekToOrigin();
-        if (!path.IsXls())
+        if (path.IsXlsx())
             IsXlsx = true;
     }
     public override void Close() { }
@@ -40,12 +45,12 @@ public class NPOINotCloseStream : MemoryStream
         {
             try
             {
-                workbook = HSSF();
+                workbook = XSSF();
             }
             catch
             {
                 Seek(0, SeekOrigin.Begin);
-                workbook = XSSF();
+                workbook = HSSF();
             }
         }
         return workbook;

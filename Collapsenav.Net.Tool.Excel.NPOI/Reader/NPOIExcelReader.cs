@@ -12,49 +12,39 @@ public class NPOIExcelReader : IExcelReader
     public int RowCount { get => rowCount; }
     public IEnumerable<string> Headers { get => HeaderList; }
     public IDictionary<string, int> HeadersWithIndex { get => HeaderIndex; }
-    public NPOIExcelReader(string path)
+    private readonly Stream? toDispose;
+    public NPOIExcelReader(string path) : this(path.OpenReadShareStream())
     {
-        using var fs = path.OpenReadShareStream();
-        Init(fs); ;
+        toDispose!.Dispose();
     }
-    public NPOIExcelReader(Stream stream)
+    public NPOIExcelReader(Stream stream, string? sheetName = null) : this(NPOITool.NPOISheet(stream, sheetName))
     {
-        Init(stream);
+        toDispose = stream;
     }
     public NPOIExcelReader(ISheet sheet)
     {
-        Init(sheet);
-    }
-    private void Init(Stream stream)
-    {
-        stream.SeekToOrigin();
-        Init(NPOITool.NPOISheet(stream));
-    }
-    private void Init(ISheet sheet)
-    {
         this.sheet = sheet;
-
         rowCount = sheet.LastRowNum + 1;
         HeaderIndex = NPOITool.HeadersWithIndex(sheet);
         HeaderList = HeaderIndex.Select(item => item.Key).ToList();
     }
-
 
     public IEnumerable<string> this[string field]
     {
         get
         {
             for (var i = Zero; i < rowCount + Zero; i++)
-                yield return sheet.GetRow(i).GetCell(HeaderIndex[field] + Zero).ToString();
+                yield return sheet.GetRow(i).GetCell(HeaderIndex[field] + Zero).ToString() ?? string.Empty;
         }
     }
-    public IEnumerable<string> this[int row] => sheet.GetRow(row + Zero).Select(item => item.ToString());
-    public string this[int row, int col] => sheet.GetRow(row).GetCell(col).ToString();
-    public string this[string field, int row] => sheet.GetRow(row).GetCell(HeaderIndex[field]).ToString();
+    public IEnumerable<string> this[int row] => sheet.GetRow(row + Zero).Select(item => item.ToString() ?? string.Empty);
+    public string this[int row, int col] => sheet.GetRow(row).GetCell(col).ToString() ?? string.Empty;
+    public string this[string field, int row] => sheet.GetRow(row).GetCell(HeaderIndex[field]).ToString() ?? string.Empty;
 
     public void Dispose()
     {
         sheet.Workbook.Close();
+        // toDispose?.Dispose();
     }
 
     public IEnumerator<IEnumerable<string>> GetEnumerator()

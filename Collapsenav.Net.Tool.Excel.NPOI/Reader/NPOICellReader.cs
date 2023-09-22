@@ -12,72 +12,61 @@ public class NPOICellReader : IExcelCellReader
     public ISheet _sheet;
     protected IWorkbook _workbook;
     public Stream? ExcelStream { get; protected set; }
-    protected NPOINotCloseStream notCloseStream;
+    protected NPOINotCloseStream? notCloseStream;
     public IDictionary<string, int> HeaderIndex;
     protected IEnumerable<string> HeaderList;
     protected int rowCount;
-    protected ISheetCellReader SheetReader;
-    public NPOICellReader(ISheetCellReader sheetReader, string? sheetName = null)
+    protected ISheetCellReader? SheetReader;
+    public NPOICellReader(ISheetCellReader sheetReader, string? sheetName = null) : this(sheetReader.SheetStream, sheetName)
     {
         SheetReader = sheetReader;
-        if (sheetName.NotEmpty())
-        {
-            ExcelStream = SheetReader.SheetStream;
-            Init(sheetName);
-        }
-        else
-        {
-            Init();
-        }
     }
     public NPOICellReader()
     {
-        Init();
+        _workbook = new SXSSFWorkbook();
+        _sheet = _workbook.CreateSheet("sheet1");
+        rowCount = 0;
+        HeaderIndex = new Dictionary<string, int>();
+        HeaderList = Enumerable.Empty<string>();
     }
-    public NPOICellReader(string path)
+    public NPOICellReader(string path) : this(path.OpenCreateReadWriteShareStream())
     {
-        var fs = path.OpenCreateReadWriteShareStream();
-        Init(fs);
     }
 
-    public NPOICellReader(Stream stream)
+    public NPOICellReader(Stream stream, string? sheetName = null) : this(NPOITool.NPOISheet(stream, sheetName))
     {
-        Init(stream);
-    }
-    public NPOICellReader(ISheet sheet)
-    {
-        Init(sheet);
-    }
-    private void Init(string sheetName)
-    {
-        Init(NPOITool.NPOISheet(ExcelStream, sheetName));
-    }
-    private void Init(Stream stream)
-    {
+        stream.SeekToOrigin();
         ExcelStream = stream;
         notCloseStream ??= new NPOINotCloseStream(stream);
-        var sheet = NPOITool.NPOISheet(ExcelStream);
-        if (sheet == null)
-            Init();
-        else
-            Init(sheet);
     }
-    private void Init(ISheet sheet)
+    public NPOICellReader(ISheet sheet)
     {
         _sheet = sheet;
         _workbook = sheet.Workbook;
 
         rowCount = sheet.LastRowNum + 1;
         HeaderIndex = NPOITool.HeadersWithIndex(sheet);
-        HeaderList = HeaderIndex?.Select(item => item.Key).ToList();
+        HeaderList = HeaderIndex?.Select(item => item.Key).ToList() ?? Enumerable.Empty<string>();
     }
-    private void Init()
-    {
-        _workbook = new SXSSFWorkbook();
-        _sheet = _workbook.CreateSheet("sheet1");
-        rowCount = 0;
-    }
+    // private void Init(Stream stream)
+    // {
+    //     ExcelStream = stream;
+    //     notCloseStream ??= new NPOINotCloseStream(stream);
+    //     var sheet = NPOITool.NPOISheet(ExcelStream);
+    //     if (sheet == null)
+    //         Init();
+    //     else
+    //         Init(sheet);
+    // }
+    // private void Init(ISheet sheet)
+    // {
+    //     _sheet = sheet;
+    //     _workbook = sheet.Workbook;
 
+    //     rowCount = sheet.LastRowNum + 1;
+    //     HeaderIndex = NPOITool.HeadersWithIndex(sheet);
+    //     HeaderList = HeaderIndex?.Select(item => item.Key).ToList();
+    // }
 
     public int RowCount { get => rowCount; }
     public IEnumerable<string> Headers { get => HeaderList; }
@@ -130,6 +119,7 @@ public class NPOICellReader : IExcelCellReader
         if (ExcelStream == null)
             return;
         ExcelStream.Clear();
+        notCloseStream ??= new NPOINotCloseStream();
         SaveTo(notCloseStream, autofit);
         notCloseStream.CopyTo(ExcelStream);
     }
@@ -164,7 +154,6 @@ public class NPOICellReader : IExcelCellReader
     /// </summary>
     public Stream GetStream()
     {
-        AutoSize();
         ExcelStream ??= new MemoryStream();
         notCloseStream ??= new NPOINotCloseStream();
         SaveTo(notCloseStream);

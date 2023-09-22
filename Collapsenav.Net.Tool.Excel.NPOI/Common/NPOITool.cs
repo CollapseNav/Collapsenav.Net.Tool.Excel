@@ -36,7 +36,7 @@ public partial class NPOITool
     {
         var workbook = NPOIWorkbook(stream);
         if (workbook.NumberOfSheets == 0)
-            return null;
+            return workbook.CreateSheet("sheet1");
         return sheetname.IsNull() ? workbook.GetSheetAt(ExcelTool.NPOIZero) : workbook.GetSheet(sheetname);
     }
     /// <summary>
@@ -62,8 +62,8 @@ public partial class NPOITool
     /// <param name="sheet">工作簿</param>
     public static IEnumerable<string> ExcelHeader(ISheet sheet)
     {
-        var header = sheet.GetRow(ExcelTool.NPOIZero)?.Cells.Select(item => item.ToString()?.Trim());
-        return header;
+        var header = sheet.GetRow(ExcelTool.NPOIZero)?.Cells.Select(item => item.ToString()?.Trim() ?? string.Empty);
+        return header ?? Enumerable.Empty<string>();
     }
     /// <summary>
     /// 获取表格header和对应的index
@@ -72,7 +72,7 @@ public partial class NPOITool
     {
         var headers = sheet.GetRow(ExcelTool.NPOIZero)?.Cells?
         .Where(item => item.ToString().NotNull())?
-        .ToDictionary(item => item.ToString()?.Trim(), item => item.ColumnIndex);
-        return headers;
+        .ToDictionary(item => item.ToString()?.Trim() ?? DateTime.Now.ToTimestamp().ToString(), item => item.ColumnIndex);
+        return headers ?? new Dictionary<string, int>();
     }
 }

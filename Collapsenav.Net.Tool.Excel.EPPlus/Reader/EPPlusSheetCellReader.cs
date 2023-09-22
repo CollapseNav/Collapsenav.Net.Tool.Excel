@@ -23,25 +23,22 @@ public class EPPlusSheetCellReader : ISheetCellReader
     public IDictionary<string, IExcelCellReader> Sheets { get; private set; }
     public EPPlusSheetCellReader(Stream stream)
     {
-        Init(stream);
-    }
-    public EPPlusSheetCellReader(string path)
-    {
-        var fs = path.OpenCreateReadWriteShareStream();
-        Init(fs);
-    }
-
-    private void Init(Stream stream)
-    {
         SheetStream = stream;
         Sheets = new Dictionary<string, IExcelCellReader>();
         var workSheets = EPPlusTool.EPPlusSheets(SheetStream);
         var sheetNames = workSheets?.Select(item => item.Name).ToList();
-        if (sheetNames.NotEmpty())
+        if (sheetNames.NotEmpty() && workSheets != null)
         {
-            sheetNames.ToDictionary(item => item, item => new EPPlusCellReader(workSheets[item])).ForEach(item => Sheets.Add(item.Key, item.Value));
+            sheetNames!.ToDictionary(item => item, item => new EPPlusCellReader(workSheets[item])).ForEach(item => Sheets.Add(item.Key, item.Value));
             Readers = Sheets.Select(item => item.Value).ToList();
         }
+        else
+        {
+            Readers = Enumerable.Empty<IExcelCellReader>();
+        }
+    }
+    public EPPlusSheetCellReader(string path) : this(path.OpenCreateReadWriteShareStream())
+    {
     }
 
     public void Save(bool autofit = true)
@@ -56,7 +53,8 @@ public class EPPlusSheetCellReader : ISheetCellReader
         var pack = EPPlusTool.EPPlusPackage(stream);
         Sheets.Select(item =>
         {
-            var reader = item.Value as EPPlusCellReader;
+            if (item.Value is not EPPlusCellReader reader)
+                throw new Exception();
             if (autofit)
                 reader.AutoSize();
             return new KeyValuePair<string, EPPlusCellReader>(item.Key, reader);

@@ -11,30 +11,25 @@ public class EPPlusExcelReader : IExcelReader
     protected IDictionary<string, int> HeaderIndex;
     protected IEnumerable<string> HeaderList;
     protected int rowCount;
-    public EPPlusExcelReader(string path)
+    private readonly Stream? toDispose;
+    public EPPlusExcelReader(string path) : this(path.OpenReadShareStream())
     {
-        using var fs = path.OpenReadShareStream();
-        Init(fs);
+        toDispose!.Dispose();
     }
-    public EPPlusExcelReader(Stream stream)
+    public EPPlusExcelReader(Stream stream, string? sheetName = null) : this(EPPlusTool.EPPlusSheet(stream, sheetName))
     {
-        Init(EPPlusTool.EPPlusSheet(stream));
+        toDispose = stream;
     }
     public EPPlusExcelReader(ExcelWorksheet sheet)
     {
-        Init(sheet);
-    }
-    private void Init(Stream stream)
-    {
-        Init(EPPlusTool.EPPlusSheet(stream));
-    }
-    private void Init(ExcelWorksheet sheet)
-    {
         this.sheet = sheet;
 
-        rowCount = sheet.Dimension?.Rows ?? Zero;
-        HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
-        HeaderList = HeaderIndex.Select(item => item.Key).ToList();
+        if (sheet.Dimension != null)
+        {
+            rowCount = sheet.Dimension?.Rows ?? 0;
+            HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
+            HeaderList = HeaderIndex.Select(item => item.Key).ToList();
+        }
         sheetData = (sheet.Cells.Value as object[,]) ?? new object[0, 0];
     }
     public IEnumerable<string> this[string field]
@@ -42,7 +37,9 @@ public class EPPlusExcelReader : IExcelReader
         get
         {
             for (var i = Zero; i < rowCount + Zero; i++)
-                yield return sheet.Cells[i, HeaderIndex[field] + Zero].Value.ToString();
+            {
+                yield return sheet.Cells[i, HeaderIndex[field] + Zero].Value.ToString() ?? string.Empty;
+            }
         }
     }
     public IEnumerable<string> this[int row]
@@ -51,18 +48,19 @@ public class EPPlusExcelReader : IExcelReader
         {
             List<string> _data = new(HeaderList.Count());
             foreach (var h in HeadersWithIndex)
-                _data.Add(sheetData[row, h.Value]?.ToString());
+                _data.Add(sheetData[row, h.Value]?.ToString() ?? string.Empty);
             return _data;
         }
     }
-    public string this[int row, int col] => sheetData[row, col].ToString();
-    public string this[string field, int row] => sheetData[row, HeaderIndex[field]].ToString();
+    public string this[int row, int col] => sheetData[row, col].ToString() ?? string.Empty;
+    public string this[string field, int row] => sheetData[row, HeaderIndex[field]].ToString() ?? string.Empty;
     public IEnumerable<string> Headers => HeaderList;
     public IDictionary<string, int> HeadersWithIndex => HeaderIndex;
     public int RowCount => rowCount;
     public void Dispose()
     {
         sheet.Workbook.Dispose();
+        // toDispose?.Dispose();
     }
     public IEnumerator<IEnumerable<string>> GetEnumerator()
     {

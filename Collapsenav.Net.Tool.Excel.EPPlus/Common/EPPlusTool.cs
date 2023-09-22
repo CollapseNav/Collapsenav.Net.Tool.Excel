@@ -63,6 +63,8 @@ public partial class EPPlusTool
     public static ExcelWorksheet EPPlusSheet(string path, string? sheetname = null)
     {
         var sheets = EPPlusSheets(path);
+        if (sheets.Count == 0)
+            return sheets.Add("sheet1");
         return sheetname.IsNull() ? sheets[ExcelTool.EPPlusZero] : sheets[sheetname];
     }
     /// <summary>
@@ -71,6 +73,8 @@ public partial class EPPlusTool
     public static ExcelWorksheet EPPlusSheet(Stream stream, string? sheetname = null)
     {
         var sheets = EPPlusSheets(stream);
+        if (sheets.Count == 0)
+            return sheets.Add("sheet1");
         return sheetname.IsNull() ? sheets[ExcelTool.EPPlusZero] : sheets[sheetname];
     }
     /// <summary>
