@@ -4,7 +4,15 @@ public class NPOISheetReader : ISheetReader<IExcelReader>
 {
     public IExcelReader this[int index] => Readers.ElementAt(index);
 
-    public IExcelReader this[string sheetName] => Sheets.ContainsKey(sheetName) ? Sheets[sheetName] : null;
+    public IExcelReader this[string sheetName]
+    {
+        get
+        {
+            if (Sheets.ContainsKey(sheetName))
+                return Sheets[sheetName];
+            throw new Exception($"不存在名称为 {sheetName} 的工作簿");
+        }
+    }
 
     public Stream SheetStream { get; private set; }
     private readonly Stream toDispose;

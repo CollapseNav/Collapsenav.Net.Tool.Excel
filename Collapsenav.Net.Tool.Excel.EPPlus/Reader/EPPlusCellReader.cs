@@ -46,6 +46,11 @@ public class EPPlusCellReader : IExcelCellReader
             HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
             HeaderList = HeaderIndex.Select(item => item.Key).ToList();
         }
+        else
+        {
+            HeaderIndex = new Dictionary<string, int>();
+            HeaderList = Enumerable.Empty<string>();
+        }
     }
     public int RowCount { get => rowCount; }
     public IEnumerable<string> Headers { get => HeaderList; }

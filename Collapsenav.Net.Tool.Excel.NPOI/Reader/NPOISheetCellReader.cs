@@ -31,13 +31,20 @@ public class NPOISheetCellReader : ISheetCellReader
     protected IWorkbook workbook;
     public NPOISheetCellReader(Stream stream)
     {
-        Init(stream);
+        IsXlsx = stream.IsXlsx();
+        SheetStream = stream;
+        var notCloseStream = new NPOINotCloseStream(SheetStream) { IsXlsx = true };
+        notCloseStream.IsXlsx = IsXlsx;
+        workbook = NPOITool.NPOIWorkbook(notCloseStream);
+        List<string> sheetNames = new();
+
+        Sheets = new Dictionary<string, IExcelCellReader>();
+        foreach (var sheet in workbook)
+            Sheets.Add(sheet.SheetName, new NPOICellReader(sheet));
+        Readers = Sheets.Select(item => item.Value).ToList();
     }
-    public NPOISheetCellReader(string path)
+    public NPOISheetCellReader(string path) : this(path.OpenCreateReadWriteShareStream())
     {
-        var fs = path.OpenCreateReadWriteShareStream();
-        IsXlsx = !path.IsXls();
-        Init(fs);
     }
 
     private void Init(Stream stream)

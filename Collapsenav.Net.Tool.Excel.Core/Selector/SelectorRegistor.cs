@@ -12,21 +12,21 @@ public class Selector
         ExcelTypeSelector.Add(excelType, streamFunc);
     }
 
-    public static void AddExcelSelector(ExcelType excelType, Func<object?, IExcelReader> objFunc, Func<Stream, IExcelReader> streamFunc)
+    public static void AddExcelSelector(ExcelType excelType, Func<object?, IExcelReader?> objFunc, Func<Stream, IExcelReader> streamFunc)
     {
         AddExcelSelector(excelType.ToString(), objFunc, streamFunc);
     }
-    public static void AddExcelSelector(string excelType, Func<object?, IExcelReader> objFunc, Func<Stream, IExcelReader> streamFunc)
+    public static void AddExcelSelector(string excelType, Func<object?, IExcelReader?> objFunc, Func<Stream, IExcelReader> streamFunc)
     {
         ExcelReaderSelector.Add(excelType, objFunc);
         ExcelReaderSelector.Add(excelType, streamFunc);
     }
 
-    public static void AddCellSelector(ExcelType excelType, Func<object?, IExcelCellReader> objFunc, Func<Stream, IExcelCellReader> streamFunc)
+    public static void AddCellSelector(ExcelType excelType, Func<object?, IExcelCellReader?> objFunc, Func<Stream, IExcelCellReader> streamFunc)
     {
         AddCellSelector(excelType.ToString(), objFunc, streamFunc);
     }
-    public static void AddCellSelector(string excelType, Func<object?, IExcelCellReader> objFunc, Func<Stream, IExcelCellReader> streamFunc)
+    public static void AddCellSelector(string excelType, Func<object?, IExcelCellReader?> objFunc, Func<Stream, IExcelCellReader> streamFunc)
     {
         CellReaderSelector.Add(excelType, objFunc);
         CellReaderSelector.Add(excelType, streamFunc);

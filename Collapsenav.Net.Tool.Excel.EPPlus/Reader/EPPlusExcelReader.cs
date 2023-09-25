@@ -30,6 +30,11 @@ public class EPPlusExcelReader : IExcelReader
             HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
             HeaderList = HeaderIndex.Select(item => item.Key).ToList();
         }
+        else
+        {
+            HeaderIndex = new Dictionary<string, int>();
+            HeaderList = Enumerable.Empty<string>();
+        }
         sheetData = (sheet.Cells.Value as object[,]) ?? new object[0, 0];
     }
     public IEnumerable<string> this[string field]

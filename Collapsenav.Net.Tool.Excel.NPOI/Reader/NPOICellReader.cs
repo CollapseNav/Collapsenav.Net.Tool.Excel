@@ -46,27 +46,8 @@ public class NPOICellReader : IExcelCellReader
 
         rowCount = sheet.LastRowNum + 1;
         HeaderIndex = NPOITool.HeadersWithIndex(sheet);
-        HeaderList = HeaderIndex?.Select(item => item.Key).ToList() ?? Enumerable.Empty<string>();
+        HeaderList = HeaderIndex.Select(item => item.Key).ToList() ?? Enumerable.Empty<string>();
     }
-    // private void Init(Stream stream)
-    // {
-    //     ExcelStream = stream;
-    //     notCloseStream ??= new NPOINotCloseStream(stream);
-    //     var sheet = NPOITool.NPOISheet(ExcelStream);
-    //     if (sheet == null)
-    //         Init();
-    //     else
-    //         Init(sheet);
-    // }
-    // private void Init(ISheet sheet)
-    // {
-    //     _sheet = sheet;
-    //     _workbook = sheet.Workbook;
-
-    //     rowCount = sheet.LastRowNum + 1;
-    //     HeaderIndex = NPOITool.HeadersWithIndex(sheet);
-    //     HeaderList = HeaderIndex?.Select(item => item.Key).ToList();
-    // }
 
     public int RowCount { get => rowCount; }
     public IEnumerable<string> Headers { get => HeaderList; }
