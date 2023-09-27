@@ -105,18 +105,28 @@ public partial class EPPlusTool
     /// 获取表格header(仅限简单的单行表头)
     /// </summary>
     /// <param name="sheet">工作簿</param>
-    public static IEnumerable<string> ExcelHeader(ExcelWorksheet sheet)
+    /// <param name="range"></param>
+    public static IEnumerable<string> ExcelHeader(ExcelWorksheet sheet, SimpleRange? range = null)
     {
-        return sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns]
-                .Select(item => item.Value?.ToString()?.Trim() ?? string.Empty).ToList() ?? Enumerable.Empty<string>();
+        IEnumerable<ExcelRangeBase> data;
+        if (range == null)
+            data = sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns];
+        else
+            data = sheet.Cells[ExcelTool.EPPlusZero + range.Row, ExcelTool.EPPlusZero + range.Col, ExcelTool.EPPlusZero + range.Row, sheet.Dimension.Columns + range.Col];
+
+        return data.Select(item => item.Value?.ToString()?.Trim() ?? string.Empty).ToList() ?? Enumerable.Empty<string>();
     }
     /// <summary>
     /// 获取表格header和对应的index
     /// </summary>
-    public static IDictionary<string, int> HeadersWithIndex(ExcelWorksheet sheet)
+    public static IDictionary<string, int> HeadersWithIndex(ExcelWorksheet sheet, SimpleRange? range = null)
     {
-        var headers = sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns]
-        .ToDictionary(item => item.Value?.ToString()?.Trim() ?? DateTime.Now.ToTimestamp().ToString(), item => item.End.Column - ExcelTool.EPPlusZero);
+        IEnumerable<ExcelRangeBase> data;
+        if (range == null)
+            data = sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns];
+        else
+            data = sheet.Cells[ExcelTool.EPPlusZero + range.Row, ExcelTool.EPPlusZero + range.Col, ExcelTool.EPPlusZero + range.Row, sheet.Dimension.Columns + range.Col];
+        var headers = data.ToDictionary(item => item.Value?.ToString()?.Trim() ?? DateTime.Now.ToTimestamp().ToString(), item => item.End.Column - ExcelTool.EPPlusZero);
         return headers;
     }
 }

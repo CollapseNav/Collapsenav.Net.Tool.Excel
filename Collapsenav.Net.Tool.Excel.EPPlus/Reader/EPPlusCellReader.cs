@@ -52,6 +52,11 @@ public class EPPlusCellReader : IExcelCellReader
             HeaderList = Enumerable.Empty<string>();
         }
     }
+    public void InitHeader(SimpleRange range)
+    {
+        HeaderIndex = EPPlusTool.HeadersWithIndex(_sheet, range);
+        HeaderList = HeaderIndex.Select(item => item.Key).ToList();
+    }
     public int RowCount { get => rowCount; }
     public IEnumerable<string> Headers { get => HeaderList; }
     public IDictionary<string, int> HeadersWithIndex { get => HeaderIndex; }

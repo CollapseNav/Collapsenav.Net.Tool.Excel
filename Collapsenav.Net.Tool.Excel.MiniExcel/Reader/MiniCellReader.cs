@@ -12,6 +12,8 @@ public class MiniCellReader : IExcelCellReader
 {
     public int Zero => ExcelTool.MiniZero;
     public List<IDictionary<string, object>> _sheet;
+    protected IDictionary<string, int> HeaderIndex;
+    protected IEnumerable<string> HeaderList;
     protected List<MiniRow> _rows;
     public Stream? ExcelStream { get; protected set; }
     protected int rowCount;
@@ -43,32 +45,32 @@ public class MiniCellReader : IExcelCellReader
 
             rowCount = _sheet.Count;
             colCount = _sheet.First().Count;
+
+            var sheetFirst = _sheet.First();
+            HeaderList = sheetFirst.Select(item => item.Value?.ToString() ?? string.Empty).ToList();
+            HeaderIndex = sheetFirst.Select((item, index) => (item.Value, index)).ToDictionary(item => item.Value?.ToString() ?? item.index.ToString(), item => item.index);
         }
         else
         {
             ExcelStream = new MemoryStream();
             _sheet = new List<IDictionary<string, object>>(1000);
             rowCount = 0;
+            HeaderList = Enumerable.Empty<string>();
+            HeaderIndex = new Dictionary<string, int>();
         }
     }
 
+
+    public void InitHeader(SimpleRange range)
+    {
+        var sheetFirst = (_sheet.Skip(range.Row).FirstOrDefault() as IEnumerable<KeyValuePair<string, object>>) ?? Enumerable.Empty<KeyValuePair<string, object>>();
+        HeaderList = sheetFirst.Select(item => item.Value?.ToString() ?? string.Empty);
+        HeaderIndex = sheetFirst.Select((item, index) => (item.Value, index)).ToDictionary(item => item.Value?.ToString() ?? item.index.ToString(), item => item.index);
+    }
+
     public int RowCount { get => rowCount; }
-    public IEnumerable<string> Headers
-    {
-        get
-        {
-            var sheetFirst = _sheet.First();
-            return sheetFirst.Select(item => item.Value?.ToString() ?? string.Empty);
-        }
-    }
-    public IDictionary<string, int> HeadersWithIndex
-    {
-        get
-        {
-            var sheetFirst = _sheet.First();
-            return sheetFirst.Select((item, index) => (item.Value, index)).ToDictionary(item => item.Value?.ToString() ?? item.index.ToString(), item => item.index);
-        }
-    }
+    public IEnumerable<string> Headers => HeaderList;
+    public IDictionary<string, int> HeadersWithIndex => HeaderIndex;
     public IEnumerable<IReadCell> this[string field]
     {
         get

@@ -7,9 +7,10 @@ public partial class ReadConfig<T>
     /// </summary>
     public virtual IEnumerable<T> ToEntity<E>(IExcelReader<E> sheet)
     {
+        sheet.InitHeader(Range);
         var header = sheet.HeadersWithIndex;
         var rowCount = sheet.RowCount;
-        foreach (var index in Enumerable.Range(1, rowCount - 1))
+        foreach (var index in Enumerable.Range(Range.Row + 1, rowCount - 1 - Range.Row))
         {
             var dataRow = sheet[index].ToList();
             // 根据对应传入的设置 为obj赋值

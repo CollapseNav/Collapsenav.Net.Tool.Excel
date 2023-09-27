@@ -37,6 +37,11 @@ public class EPPlusExcelReader : IExcelReader
         }
         sheetData = (sheet.Cells.Value as object[,]) ?? new object[0, 0];
     }
+    public void InitHeader(SimpleRange range)
+    {
+        HeaderIndex = EPPlusTool.HeadersWithIndex(sheet, range);
+        HeaderList = HeaderIndex.Select(item => item.Key).ToList();
+    }
     public IEnumerable<string> this[string field]
     {
         get

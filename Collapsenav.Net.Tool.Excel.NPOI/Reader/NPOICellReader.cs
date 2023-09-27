@@ -48,7 +48,11 @@ public class NPOICellReader : IExcelCellReader
         HeaderIndex = NPOITool.HeadersWithIndex(sheet);
         HeaderList = HeaderIndex.Select(item => item.Key).ToList() ?? Enumerable.Empty<string>();
     }
-
+    public void InitHeader(SimpleRange range)
+    {
+        HeaderIndex = NPOITool.HeadersWithIndex(_sheet, range);
+        HeaderList = HeaderIndex.Select(item => item.Key).ToList() ?? Enumerable.Empty<string>();
+    }
     public int RowCount { get => rowCount; }
     public IEnumerable<string> Headers { get => HeaderList; }
     public IDictionary<string, int> HeadersWithIndex { get => HeaderIndex; }

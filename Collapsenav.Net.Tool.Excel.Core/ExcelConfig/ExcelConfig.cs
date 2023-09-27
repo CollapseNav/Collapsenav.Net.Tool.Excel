@@ -11,6 +11,7 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     {
         FieldOption = new List<CellOption>();
         DtoType = typeof(T);
+        Range = new SimpleRange();
     }
     public ExcelConfig(IEnumerable<(string, string)>? kvs) : this()
     {
@@ -30,7 +31,8 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
         }
     }
     public Type DtoType { get; protected set; }
-    public virtual IEnumerable<CellOption> FieldOption { get; set; }
+    public IEnumerable<CellOption> FieldOption { get; set; }
+    public SimpleRange Range { get; private set; }
     public IEnumerable<T> Data
     {
         get => data ?? Enumerable.Empty<T>(); set

@@ -8,6 +8,10 @@ public interface IExcelReader : IExcelReader<string> { }
 /// </summary>
 public interface IExcelReader<T> : IExcelContainer<T>, IExcelHeader
 {
+    /// <summary>
+    /// 重新初始化Header
+    /// </summary>
+    void InitHeader(SimpleRange range);
 #if NET6_0_OR_GREATER && NETCOREAPP
     public static IExcelReader GetExcelReader(object sheet)
     {

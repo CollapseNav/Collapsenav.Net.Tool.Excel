@@ -29,6 +29,11 @@ public class NPOIExcelReader : IExcelReader
         HeaderList = HeaderIndex.Select(item => item.Key).ToList();
     }
 
+    public void InitHeader(SimpleRange range)
+    {
+        HeaderIndex = NPOITool.HeadersWithIndex(sheet, range);
+        HeaderList = HeaderIndex.Select(item => item.Key).ToList();
+    }
     public IEnumerable<string> this[string field]
     {
         get

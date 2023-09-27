@@ -60,17 +60,28 @@ public partial class NPOITool
     /// 获取表格header(仅限简单的单行表头)
     /// </summary>
     /// <param name="sheet">工作簿</param>
-    public static IEnumerable<string> ExcelHeader(ISheet sheet)
+    /// <param name="range"></param>
+    public static IEnumerable<string> ExcelHeader(ISheet sheet, SimpleRange? range = null)
     {
-        var header = sheet.GetRow(ExcelTool.NPOIZero)?.Cells.Select(item => item.ToString()?.Trim() ?? string.Empty);
+        IRow row;
+        if (range == null)
+            row = sheet.GetRow(ExcelTool.NPOIZero);
+        else
+            row = sheet.GetRow(ExcelTool.NPOIZero + range.Row);
+        var header = row?.Cells?.Select(item => item.ToString()?.Trim() ?? string.Empty);
         return header ?? Enumerable.Empty<string>();
     }
     /// <summary>
     /// 获取表格header和对应的index
     /// </summary>
-    public static IDictionary<string, int> HeadersWithIndex(ISheet sheet)
+    public static IDictionary<string, int> HeadersWithIndex(ISheet sheet, SimpleRange? range = null)
     {
-        var headers = sheet.GetRow(ExcelTool.NPOIZero)?.Cells?
+        IRow row;
+        if (range == null)
+            row = sheet.GetRow(ExcelTool.NPOIZero);
+        else
+            row = sheet.GetRow(ExcelTool.NPOIZero + range.Row);
+        var headers = row?.Cells?
         .Where(item => item.ToString().NotNull())?
         .ToDictionary(item => item.ToString()?.Trim() ?? DateTime.Now.ToTimestamp().ToString(), item => item.ColumnIndex);
         return headers ?? new Dictionary<string, int>();

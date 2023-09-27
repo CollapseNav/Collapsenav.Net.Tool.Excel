@@ -20,6 +20,7 @@ public interface IExcelConfig<out T, CellOption> : IExcelConfig where CellOption
     /// 表格数据
     /// </summary>
     IEnumerable<T> Data { get; }
+    SimpleRange Range { get; }
     /// <summary>
     /// 添加普通单元格设置
     /// </summary>
