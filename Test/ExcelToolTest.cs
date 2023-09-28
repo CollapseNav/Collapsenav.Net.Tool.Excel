@@ -7,7 +7,7 @@ using Xunit;
 namespace Collapsenav.Net.Tool.Excel.Test;
 public class ExcelToolTest
 {
-    private readonly string path = "./TestExcel.xlsx";
+    private readonly string path = "./TestExcelTool.xlsx";
     private void TestExcelTest(IExcelReader reader1, IExcelReader reader2)
     {
         Assert.True(reader1[0, 0] == reader2[0, 0]);
