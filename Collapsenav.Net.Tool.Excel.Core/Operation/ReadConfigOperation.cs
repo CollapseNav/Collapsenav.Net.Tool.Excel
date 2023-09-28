@@ -37,7 +37,7 @@ public partial class ReadConfig<T>
     /// </summary>
     public virtual async Task<IEnumerable<T>> ToEntityAsync(IExcelReader sheet)
     {
-        return await Task.Factory.StartNew(() => ToEntity(sheet));
+        return await Task.Factory.StartNew(() => ToEntity(sheet).ToList());
         // return await Task.Factory.StartNew(() => IsShuffle ? ToEntity(sheet).Shuffle() : ToEntity(sheet));
     }
 

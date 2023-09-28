@@ -11,6 +11,10 @@ public class SimpleRange
     {
         (Row, Col) = (0, 0);
     }
+    public bool IsDefault()
+    {
+        return Row == 0 && Col == 0;
+    }
     /// <summary>
     /// 跳过行
     /// </summary>

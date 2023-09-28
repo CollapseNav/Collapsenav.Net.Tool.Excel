@@ -22,6 +22,10 @@ public interface IExcelConfig<out T, CellOption> : IExcelConfig where CellOption
     IEnumerable<T> Data { get; }
     SimpleRange Range { get; }
     /// <summary>
+    /// 跳过行
+    /// </summary>
+    IExcelConfig<T, CellOption> SkipRow(int row);
+    /// <summary>
     /// 添加普通单元格设置
     /// </summary>
     /// <param name="field">列名</param>

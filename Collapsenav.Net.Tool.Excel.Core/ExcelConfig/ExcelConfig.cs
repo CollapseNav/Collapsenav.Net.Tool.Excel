@@ -180,4 +180,10 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     {
         FieldOption = new List<CellOption>();
     }
+
+    public virtual IExcelConfig<T, CellOption> SkipRow(int row)
+    {
+        Range.SkipRow(row);
+        return this;
+    }
 }

@@ -39,6 +39,8 @@ public class EPPlusExcelReader : IExcelReader
     }
     public void InitHeader(SimpleRange range)
     {
+        if (range.IsDefault())
+            return;
         HeaderIndex = EPPlusTool.HeadersWithIndex(sheet, range);
         HeaderList = HeaderIndex.Select(item => item.Key).ToList();
     }

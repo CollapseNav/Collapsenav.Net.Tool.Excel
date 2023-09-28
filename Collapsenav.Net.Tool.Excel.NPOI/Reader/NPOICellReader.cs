@@ -50,6 +50,8 @@ public class NPOICellReader : IExcelCellReader
     }
     public void InitHeader(SimpleRange range)
     {
+        if (range.IsDefault())
+            return;
         HeaderIndex = NPOITool.HeadersWithIndex(_sheet, range);
         HeaderList = HeaderIndex.Select(item => item.Key).ToList() ?? Enumerable.Empty<string>();
     }

@@ -91,8 +91,6 @@ public class ExportConfig : ExportConfig<object>
             exportConfig.FieldOption = config.FieldOption.Select(item => new ExportCellOption<object>(item.ExcelField, item.Prop, (data) => item.Action((T)data))).ToList();
             exportConfig.Data = config.Data;
         }
-        // var exportOptions = exportConfig.FieldOption;
-        // exportConfig.FieldOption = config.FieldOption.Select(item => new ExportCellOption<object>(item.ExcelField, item.Prop, (data) => item.Action((T)data)));
         return exportConfig;
     }
 }
