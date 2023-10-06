@@ -76,11 +76,27 @@ public partial class NPOITool
     /// </summary>
     public static IDictionary<string, int> HeadersWithIndex(ISheet sheet, SimpleRange? range = null)
     {
-        IRow row;
+        IRow? row = null;
         if (range == null)
             row = sheet.GetRow(ExcelTool.NPOIZero);
         else
-            row = sheet.GetRow(ExcelTool.NPOIZero + range.Row);
+        {
+            if (range.SelectRow == null)
+                row = sheet.GetRow(ExcelTool.NPOIZero + range.Row);
+            else
+            {
+                for (var i = ExcelTool.NPOIZero; i < sheet.LastRowNum + 1; i++)
+                {
+                    row = sheet.GetRow(i);
+                    if (row != null && range.SelectRow(row.Cells))
+                    {
+                        range.SkipRow(i);
+                        break;
+                    }
+                }
+                row ??= sheet.GetRow(ExcelTool.NPOIZero);
+            }
+        }
         var headers = row?.Cells?
         .Where(item => item.ToString().NotNull())?
         .ToDictionary(item => item.ToString()?.Trim() ?? DateTime.Now.ToTimestamp().ToString(), item => item.ColumnIndex);
