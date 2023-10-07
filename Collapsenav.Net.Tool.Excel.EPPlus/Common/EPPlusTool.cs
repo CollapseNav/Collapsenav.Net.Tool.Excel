@@ -108,12 +108,13 @@ public partial class EPPlusTool
     /// <param name="range"></param>
     public static IEnumerable<string> ExcelHeader(ExcelWorksheet sheet, SimpleRange? range = null)
     {
-        IEnumerable<ExcelRangeBase> data;
+        IEnumerable<ExcelRangeBase>? data = null;
         if (range == null)
             data = sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns];
         else
-            data = sheet.Cells[ExcelTool.EPPlusZero + range.Row, ExcelTool.EPPlusZero + range.Col, ExcelTool.EPPlusZero + range.Row, sheet.Dimension.Columns + range.Col];
-
+        {
+            data = GetExcelRangeBaseByRange(sheet, range);
+        }
         return data.Select(item => item.Value?.ToString()?.Trim() ?? string.Empty).ToList() ?? Enumerable.Empty<string>();
     }
     /// <summary>
@@ -121,12 +122,37 @@ public partial class EPPlusTool
     /// </summary>
     public static IDictionary<string, int> HeadersWithIndex(ExcelWorksheet sheet, SimpleRange? range = null)
     {
-        IEnumerable<ExcelRangeBase> data;
+        IEnumerable<ExcelRangeBase>? data = null;
         if (range == null)
             data = sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns];
         else
-            data = sheet.Cells[ExcelTool.EPPlusZero + range.Row, ExcelTool.EPPlusZero + range.Col, ExcelTool.EPPlusZero + range.Row, sheet.Dimension.Columns + range.Col];
+        {
+            if (range.SelectRow == null)
+                data = sheet.Cells[ExcelTool.EPPlusZero + range.Row, ExcelTool.EPPlusZero + range.Col, ExcelTool.EPPlusZero + range.Row, sheet.Dimension.Columns + range.Col];
+            else
+            {
+                data = GetExcelRangeBaseByRange(sheet, range);
+            }
+        }
         var headers = data.ToDictionary(item => item.Value?.ToString()?.Trim() ?? DateTime.Now.ToTimestamp().ToString(), item => item.End.Column - ExcelTool.EPPlusZero);
         return headers;
+    }
+    private static IEnumerable<ExcelRangeBase> GetExcelRangeBaseByRange(ExcelWorksheet sheet, SimpleRange range)
+    {
+        if (range.SelectRow == null)
+            return sheet.Cells[ExcelTool.EPPlusZero + range.Row, ExcelTool.EPPlusZero + range.Col, ExcelTool.EPPlusZero + range.Row, sheet.Dimension.Columns + range.Col];
+        else
+        {
+            for (var i = ExcelTool.EPPlusZero; i < sheet.Dimension.Columns; i++)
+            {
+                var data = sheet.Cells[i, ExcelTool.EPPlusZero + range.Col, i, sheet.Dimension.Columns + range.Col];
+                if (data.NotEmpty() && range.SelectRow(data.Select(item => item.Value.ToString())!))
+                {
+                    range.SkipRow(i - ExcelTool.EPPlusZero);
+                    return data;
+                }
+            }
+            return Enumerable.Empty<ExcelRangeBase>();
+        }
     }
 }
