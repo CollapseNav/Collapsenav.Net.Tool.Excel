@@ -127,26 +127,21 @@ public partial class EPPlusTool
             data = sheet.Cells[ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, ExcelTool.EPPlusZero, sheet.Dimension.Columns];
         else
         {
-            if (range.SelectRow == null)
-                data = sheet.Cells[ExcelTool.EPPlusZero + range.Row, ExcelTool.EPPlusZero + range.Col, ExcelTool.EPPlusZero + range.Row, sheet.Dimension.Columns + range.Col];
-            else
-            {
-                data = GetExcelRangeBaseByRange(sheet, range);
-            }
+            data = GetExcelRangeBaseByRange(sheet, range);
         }
         var headers = data.ToDictionary(item => item.Value?.ToString()?.Trim() ?? DateTime.Now.ToTimestamp().ToString(), item => item.End.Column - ExcelTool.EPPlusZero);
         return headers;
     }
     private static IEnumerable<ExcelRangeBase> GetExcelRangeBaseByRange(ExcelWorksheet sheet, SimpleRange range)
     {
-        if (range.SelectRow == null)
+        if (range.StartFrom == null)
             return sheet.Cells[ExcelTool.EPPlusZero + range.Row, ExcelTool.EPPlusZero + range.Col, ExcelTool.EPPlusZero + range.Row, sheet.Dimension.Columns + range.Col];
         else
         {
             for (var i = ExcelTool.EPPlusZero; i < sheet.Dimension.Columns; i++)
             {
                 var data = sheet.Cells[i, ExcelTool.EPPlusZero + range.Col, i, sheet.Dimension.Columns + range.Col];
-                if (data.NotEmpty() && range.SelectRow(data.Select(item => item.Value.ToString())!))
+                if (data.NotEmpty() && range.StartFrom(data.Select(item => item.Value.ToString())!))
                 {
                     range.SkipRow(i - ExcelTool.EPPlusZero);
                     return data;

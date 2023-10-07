@@ -25,6 +25,8 @@ public interface IExcelConfig<out T, CellOption> : IExcelConfig where CellOption
     /// 跳过行
     /// </summary>
     IExcelConfig<T, CellOption> SkipRow(int row);
+    IExcelConfig<T, CellOption> StartFrom(Func<IEnumerable<object>, bool> selectRow);
+    IExcelConfig<T, CellOption> StopAt(Func<IEnumerable<object>, bool> selectRow);
     /// <summary>
     /// 添加普通单元格设置
     /// </summary>

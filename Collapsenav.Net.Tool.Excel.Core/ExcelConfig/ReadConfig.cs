@@ -220,9 +220,21 @@ public partial class ReadConfig<T> : ExcelConfig<T, ReadCellOption<T>>
     {
         return action == null ? GenOption(field, prop) : new ReadCellOption<T>(field, prop, item => action(item));
     }
-    public new ReadConfig<T> SkipRow(int row)
+    public virtual new ReadConfig<T> SkipRow(int row)
     {
         base.SkipRow(row);
+        return this;
+    }
+
+    public virtual new ReadConfig<T> StartFrom(Func<IEnumerable<object>, bool> selectRow)
+    {
+        Range.StartFrom = selectRow;
+        return this;
+    }
+
+    public virtual new ReadConfig<T> StopAt(Func<IEnumerable<object>, bool> selectRow)
+    {
+        Range.StopAt = selectRow;
         return this;
     }
 }

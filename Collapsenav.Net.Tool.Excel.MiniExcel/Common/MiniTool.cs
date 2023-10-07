@@ -9,7 +9,7 @@ public class MiniTool
         {
             sheetFirst = (sheet.FirstOrDefault() as IEnumerable<KeyValuePair<string, object>>) ?? Enumerable.Empty<KeyValuePair<string, object>>();
         }
-        else if (range.SelectRow == null)
+        else if (range.StartFrom == null)
         {
             sheetFirst = (sheet.Skip(range.Row).FirstOrDefault() as IEnumerable<KeyValuePair<string, object>>) ?? Enumerable.Empty<KeyValuePair<string, object>>();
         }
@@ -18,7 +18,7 @@ public class MiniTool
             for (var i = ExcelTool.MiniZero; i < sheet.Count(); i++)
             {
                 sheetFirst = sheet.Skip(i).FirstOrDefault() as IEnumerable<KeyValuePair<string, object>>;
-                if (sheetFirst.NotEmpty() && range.SelectRow(sheetFirst!.Select(item => item.Value?.ToString() ?? string.Empty)))
+                if (sheetFirst.NotEmpty() && range.StartFrom(sheetFirst!.Select(item => item.Value?.ToString() ?? string.Empty)))
                 {
                     range.SkipRow(i - ExcelTool.MiniZero);
                     break;

@@ -186,4 +186,16 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
         Range.SkipRow(row);
         return this;
     }
+
+    public virtual IExcelConfig<T, CellOption> StartFrom(Func<IEnumerable<object>, bool> selectRow)
+    {
+        Range.StartFrom = selectRow;
+        return this;
+    }
+
+    public virtual IExcelConfig<T, CellOption> StopAt(Func<IEnumerable<object>, bool> selectRow)
+    {
+        Range.StopAt = selectRow;
+        return this;
+    }
 }

@@ -42,7 +42,7 @@ public class EPPlusCellReader : IExcelCellReader
 
         if (sheet.Dimension != null)
         {
-            rowCount = sheet.Dimension?.Rows ?? 0;
+            rowCount = (sheet.Dimension?.End?.Row) ?? 0;
             HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
             HeaderList = HeaderIndex.Select(item => item.Key).ToList();
         }

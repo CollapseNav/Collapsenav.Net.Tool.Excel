@@ -81,14 +81,14 @@ public partial class NPOITool
             row = sheet.GetRow(ExcelTool.NPOIZero);
         else
         {
-            if (range.SelectRow == null)
+            if (range.StartFrom == null)
                 row = sheet.GetRow(ExcelTool.NPOIZero + range.Row);
             else
             {
                 for (var i = ExcelTool.NPOIZero; i < sheet.LastRowNum + 1; i++)
                 {
                     row = sheet.GetRow(i);
-                    if (row != null && range.SelectRow(row.Cells))
+                    if (row != null && range.StartFrom(row.Cells))
                     {
                         range.SkipRow(i);
                         break;

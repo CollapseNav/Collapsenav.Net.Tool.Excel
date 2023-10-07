@@ -26,7 +26,7 @@ public class EPPlusExcelReader : IExcelReader
 
         if (sheet.Dimension != null)
         {
-            rowCount = sheet.Dimension?.Rows ?? 0;
+            rowCount = (sheet.Dimension?.End?.Row) ?? 0;
             HeaderIndex = EPPlusTool.HeadersWithIndex(sheet);
             HeaderList = HeaderIndex.Select(item => item.Key).ToList();
         }
@@ -35,7 +35,7 @@ public class EPPlusExcelReader : IExcelReader
             HeaderIndex = new Dictionary<string, int>();
             HeaderList = Enumerable.Empty<string>();
         }
-        sheetData = (sheet.Cells.Value as object[,]) ?? new object[0, 0];
+        sheetData = (sheet.Cells[Zero, Zero, rowCount, sheet.Dimension.Columns].Value as object[,]) ?? new object[0, 0];
     }
     public void InitHeader(SimpleRange range)
     {
@@ -49,9 +49,7 @@ public class EPPlusExcelReader : IExcelReader
         get
         {
             for (var i = Zero; i < rowCount + Zero; i++)
-            {
                 yield return sheet.Cells[i, HeaderIndex[field] + Zero].Value.ToString() ?? string.Empty;
-            }
         }
     }
     public IEnumerable<string> this[int row]

@@ -10,25 +10,54 @@ public partial class ReadConfig<T>
         sheet.InitHeader(Range);
         var header = sheet.HeadersWithIndex;
         var rowCount = sheet.RowCount;
-        foreach (var index in Enumerable.Range(Range.Row + 1, rowCount - 1 - Range.Row))
+        if (Range.StopAt == null)
         {
-            var dataRow = sheet[index].ToList();
-            // 根据对应传入的设置 为obj赋值
-            if (dataRow.NotEmpty())
+            foreach (var index in Enumerable.Range(Range.Row + 1, (Range.EndRow ?? rowCount) - 1 - Range.Row))
             {
-                var obj = Activator.CreateInstance<T>();
-                foreach (var option in FieldOption)
+                var dataRow = sheet[index].ToList();
+                // 根据对应传入的设置 为obj赋值
+                if (dataRow.NotEmpty())
                 {
-                    if (option.ExcelField.NotNull())
+                    var obj = Activator.CreateInstance<T>();
+                    foreach (var option in FieldOption)
                     {
-                        var value = dataRow[header[option.ExcelField]];
-                        option.Prop!.SetValue(obj, option.Action == null ? value : option.Action(value?.ToString() ?? string.Empty));
+                        if (option.ExcelField.NotNull())
+                        {
+                            var value = dataRow[header[option.ExcelField]];
+                            option.Prop!.SetValue(obj, option.Action == null ? value : option.Action(value?.ToString() ?? string.Empty));
+                        }
+                        else
+                            option.Prop!.SetValue(obj, option.Action == null ? null : option.Action(string.Empty));
                     }
-                    else
-                        option.Prop!.SetValue(obj, option.Action == null ? null : option.Action(string.Empty));
+                    Init?.Invoke(obj);
+                    yield return obj;
                 }
-                Init?.Invoke(obj);
-                yield return obj;
+            }
+        }
+        else
+        {
+            foreach (var index in Enumerable.Range(Range.Row + 1, rowCount - 1 - Range.Row))
+            {
+                var dataRow = sheet[index].ToList();
+                // 根据对应传入的设置 为obj赋值
+                if (dataRow.NotEmpty() && !Range.StopAt((dataRow as IEnumerable<object>)!))
+                {
+                    var obj = Activator.CreateInstance<T>();
+                    foreach (var option in FieldOption)
+                    {
+                        if (option.ExcelField.NotNull())
+                        {
+                            var value = dataRow[header[option.ExcelField]];
+                            option.Prop!.SetValue(obj, option.Action == null ? value : option.Action(value?.ToString() ?? string.Empty));
+                        }
+                        else
+                            option.Prop!.SetValue(obj, option.Action == null ? null : option.Action(string.Empty));
+                    }
+                    Init?.Invoke(obj);
+                    yield return obj;
+                }
+                else
+                    break;
             }
         }
     }
