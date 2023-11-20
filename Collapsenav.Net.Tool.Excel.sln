@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collapsenav.Net.Tool.Excel.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collapsenav.Net.Tool.Excel.Test", "Test\Collapsenav.Net.Tool.Excel.Test.csproj", "{1B56D855-6FCD-4A56-AA22-B30162BC4CF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{C8CD0246-BD57-466C-8090-FC99DE98200A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,9 +48,5 @@ Global
 		{1B56D855-6FCD-4A56-AA22-B30162BC4CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B56D855-6FCD-4A56-AA22-B30162BC4CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B56D855-6FCD-4A56-AA22-B30162BC4CF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8CD0246-BD57-466C-8090-FC99DE98200A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8CD0246-BD57-466C-8090-FC99DE98200A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8CD0246-BD57-466C-8090-FC99DE98200A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8CD0246-BD57-466C-8090-FC99DE98200A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
