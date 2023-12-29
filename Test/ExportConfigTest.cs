@@ -82,7 +82,7 @@ public class ExportConfigTest
         static void TestData(System.Collections.Generic.IEnumerable<ExcelTestDto> data)
         {
             Assert.True(data.Count() == 10);
-            Assert.True(data.All(item => item.Field0.AllEndsWith("233")));
+            Assert.True(data.All(item => item.Field0.EndsWith("233")));
             Assert.True(data.OrderBy(item => item.Field1).ToList().SequenceEqual(ExcelTestDto.ExportData().OrderBy(item => item.Field1).ToList(), item => item.Field1.GetHashCode() ^ item.Field2.GetHashCode() ^ item.Field3.GetHashCode()));
         }
     }

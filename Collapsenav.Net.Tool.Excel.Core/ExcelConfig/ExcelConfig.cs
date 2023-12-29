@@ -125,7 +125,7 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     {
         config ??= new ExcelConfig<T, CellOption>();
         config.ClearFieldOption();
-        foreach (var prop in config.DtoType.BuildInTypeProps())
+        foreach (var prop in config.DtoType.Props().Where(i => i.PropertyType.IsBaseType()))
             config.Add(prop.Name, prop);
         return config;
     }
@@ -137,7 +137,7 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
     {
         config ??= new ExcelConfig<T, CellOption>();
         config.ClearFieldOption();
-        var attrData = config.DtoType.AttrValues<Attr>();
+        var attrData = config.DtoType.AttrValue<Attr>();
         foreach (var prop in attrData)
         {
             if (prop.Value != null && prop.Value.ExcelField.NotEmpty())
@@ -156,7 +156,7 @@ public class ExcelConfig<T, CellOption> : IExcelConfig<T, CellOption> where Cell
         type ??= config.DtoType;
         // 获取所有注释node
         var nodes = XmlExt.GetXmlDocuments().GetSummaryNodes().Where(item => item.FullName.Contains(type.FullName ?? string.Empty)).ToArray();
-        var kvs = type!.BuildInTypePropNames()?.Select(propName =>
+        var kvs = type!.Props().Where(i => i.PropertyType.IsBaseType()).Select(i => i.Name)?.Select(propName =>
         {
             var node = nodes.FirstOrDefault(item => item.FullName.Split('.').Last() == propName);
             if (node is null)
