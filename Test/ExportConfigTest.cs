@@ -231,12 +231,12 @@ public class ExportConfigTest
         .Add("Field3", item => item.Field3)
         ;
         _ = config.EPPlusExportHeader(path);
-        IExcelCellReader reader = IExcelCellReader.GetCellReader(path, ExcelType.MiniExcel);
+        IExcelCellReader reader = new MiniCellReader(path);
         Assert.True(reader.Headers.SequenceEqual(realHeader));
         reader.Dispose();
 
         _ = config.NPOIExportHeader(path);
-        reader = IExcelCellReader.GetCellReader(path, ExcelType.MiniExcel);
+        reader = new MiniCellReader(path);
         Assert.True(reader.Headers.SequenceEqual(realHeader));
         reader.Dispose();
     }
@@ -254,14 +254,14 @@ public class ExportConfigTest
         ;
         var fs = path.OpenCreateReadWriteShareStream();
         _ = config.EPPlusExportHeader(fs);
-        IExcelCellReader reader = IExcelCellReader.GetCellReader(path, ExcelType.MiniExcel);
+        IExcelCellReader reader = new MiniCellReader(path);
         Assert.True(reader.Headers.SequenceEqual(realHeader));
         reader.Dispose();
         fs.Dispose();
 
         fs = path.OpenCreateReadWriteShareStream();
         _ = config.NPOIExportHeader(fs);
-        reader = IExcelCellReader.GetCellReader(path, ExcelType.MiniExcel);
+        reader = new MiniCellReader(path);
         Assert.True(reader.Headers.SequenceEqual(realHeader));
         reader.Dispose();
         fs.Dispose();
@@ -281,14 +281,14 @@ public class ExportConfigTest
         var fs = config.EPPlusExportHeader();
         fs.SaveTo(path);
         fs.Dispose();
-        IExcelCellReader reader = IExcelCellReader.GetCellReader(path, ExcelType.MiniExcel);
+        IExcelCellReader reader = new MiniCellReader(path);
         Assert.True(reader.Headers.SequenceEqual(realHeader));
         reader.Dispose();
 
         fs = config.NPOIExportHeader();
         fs.SaveTo(path);
         fs.Dispose();
-        reader = IExcelCellReader.GetCellReader(path, ExcelType.MiniExcel);
+        reader = new MiniCellReader(path);
         Assert.True(reader.Headers.SequenceEqual(realHeader));
         reader.Dispose();
     }

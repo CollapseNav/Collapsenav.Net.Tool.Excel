@@ -26,19 +26,4 @@ public interface IExcelCellReader : IExcelReader<IReadCell>
     /// 获取对应excel流
     /// </summary>
     Stream GetStream();
-#if NET6_0_OR_GREATER && NETCOREAPP
-    public static IExcelCellReader GetCellReader(object sheet)
-    {
-        return CellReaderSelector.GetCellReader(sheet);
-    }
-    public static IExcelCellReader GetCellReader(Stream stream, ExcelType? excelType = null)
-    {
-        return CellReaderSelector.GetCellReader(stream, excelType.ToString());
-    }
-    public static IExcelCellReader GetCellReader(string path, ExcelType? excelType = null)
-    {
-        using var fs = path.OpenReadWriteShareStream();
-        return GetCellReader(fs, excelType);
-    }
-#endif
 }

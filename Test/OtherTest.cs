@@ -44,8 +44,8 @@ public class OtherTest
         string path = "./TestExcel.xlsx";
         var epplusSheet = EPPlusTool.EPPlusSheet(path);
         var npoiSheet = NPOITool.NPOISheet(path);
-        using var reader1 = IExcelCellReader.GetCellReader(epplusSheet);
-        using var reader2 = IExcelCellReader.GetCellReader(npoiSheet);
+        using var reader1 = epplusSheet.GetCellReader();
+        using var reader2 = npoiSheet.GetCellReader();
         Assert.True(reader1[0, 0].StringValue == reader2[0, 0].StringValue);
         Assert.True(reader1[0, 1].StringValue == reader2[0, 1].StringValue);
         Assert.True(reader1[2, 2].StringValue == reader2[2, 2].StringValue);
@@ -58,8 +58,8 @@ public class OtherTest
         string path = "./TestExcel.xlsx";
         var epplusSheet = EPPlusTool.EPPlusSheet(path);
         var npoiSheet = NPOITool.NPOISheet(path);
-        using var reader1 = IExcelReader.GetExcelReader(epplusSheet);
-        using var reader2 = IExcelReader.GetExcelReader(npoiSheet);
+        using var reader1 = epplusSheet.GetExcelReader();
+        using var reader2 = npoiSheet.GetExcelReader();
         Assert.True(reader1[0, 0] == reader2[0, 0]);
         Assert.True(reader1[0, 1] == reader2[0, 1]);
         Assert.True(reader1[2, 2] == reader2[2, 2]);
