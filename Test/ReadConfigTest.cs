@@ -345,7 +345,7 @@ public class ReadConfigTest
     public async Task StaticReadConfigFuncByIExcelReadTest()
     {
         string path = "./TestExcel.xlsx";
-        using var reader = IExcelReader.GetExcelReader(path);
+        using var reader = new MiniExcelReader(path);
         var config = new ReadConfig<ExcelTestDto>()
         .Add("Field0", item => item.Field0)
         .Add("Field1", item => item.Field1)
