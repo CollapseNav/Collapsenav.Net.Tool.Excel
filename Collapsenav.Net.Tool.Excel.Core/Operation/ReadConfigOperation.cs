@@ -19,7 +19,7 @@ public partial class ReadConfig<T>
                 if (dataRow.NotEmpty())
                 {
                     var obj = Activator.CreateInstance<T>();
-                    foreach (var option in FieldOption)
+                    foreach (var option in FieldOption.Where(o => o.ExcelField.IsEmpty() || header.ContainsKey(o.ExcelField)))
                     {
                         if (option.ExcelField.NotNull())
                         {
